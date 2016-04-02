@@ -141,7 +141,6 @@ void OGL_CheckError(void)
   if( eAPI==GAT_OGL) ASSERT( pglGetError()==GL_NO_ERROR);
   else ASSERT( eAPI==GAT_NONE);
 #endif
-
 }
 
 #ifdef SE1_D3D
