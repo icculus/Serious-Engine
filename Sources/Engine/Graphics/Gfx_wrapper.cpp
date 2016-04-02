@@ -6,7 +6,7 @@
 #include <Engine/Graphics/ViewPort.h>
 
 #include <Engine/Graphics/GfxProfile.h>
-#include <Engine/Base/Statistics_internal.h>
+#include <Engine/Base/Statistics_Internal.h>
 
 //#include <d3dx8math.h>
 //#pragma comment(lib, "d3dx8.lib")

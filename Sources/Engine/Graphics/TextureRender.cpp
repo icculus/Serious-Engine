@@ -17,5 +17,5 @@
 #include <Engine/Templates/Stock_CtextureData.h>
 #include <Engine/Templates/StaticArray.cpp>
 
-#include <Engine/Base/Statistics_internal.h>
+#include <Engine/Base/Statistics_Internal.h>
 
