@@ -141,6 +141,7 @@ void OGL_CheckError(void)
   if( eAPI==GAT_OGL) ASSERT( pglGetError()==GL_NO_ERROR);
   else ASSERT( eAPI==GAT_NONE);
 #endif
+
 }
 
 #ifdef SE1_D3D
@@ -651,8 +652,8 @@ extern ULONG gfxGetColorMask(void)
 
 
 
-#include "GFX_wrapper_OpenGL.cpp"
-#include "GFX_wrapper_Direct3D.cpp"
+#include "Gfx_wrapper_OpenGL.cpp"
+#include "Gfx_wrapper_Direct3D.cpp"
 
 
 
