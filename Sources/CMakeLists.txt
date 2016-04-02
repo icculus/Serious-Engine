@@ -4,6 +4,8 @@ project(SeriousEngine)
 # Set @rpath for Mac OS X shared library install names.
 cmake_policy(SET CMP0042 NEW)
 
+# Needed to find the SDL1.2 library files
+find_package(SDL REQUIRED)
 
 # Set up some sanity stuff...
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -593,13 +595,13 @@ add_executable(SeriousSam
     SeriousSam/SplashScreen.cpp
     SeriousSam/MainWindow.cpp
 )
-target_link_libraries(SeriousSam SeriousEngine)
+target_link_libraries(SeriousSam ${CMAKE_BINARY_DIR}/libSeriousEngine.a ${SDL_LIBRARY})
 add_dependencies(SeriousSam ParseAllEntities)
 
 add_executable(SeriousSamDedicated
     DedicatedServer/DedicatedServer.cpp
 )
-target_link_libraries(SeriousSamDedicated SeriousEngine)
+target_link_libraries(SeriousSamDedicated ${CMAKE_BINARY_DIR}/libSeriousEngine.a ${SDL_LIBRARY})
 add_dependencies(SeriousSamDedicated ParseAllEntities)
 
 if(MACOSX)
