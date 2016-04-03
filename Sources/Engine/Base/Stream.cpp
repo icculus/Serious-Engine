@@ -156,7 +156,7 @@ void InitStreams(void)
   }
   // find eventual extension for the mod's dlls
   _strModExt = "";
-  LoadStringVar(CTString("ModExt.txt"), _strModExt);
+  LoadStringVar(CTString("ModEXT.txt"), _strModExt);
 
 
   CPrintF(TRANSV("Loading group files...\n"));
