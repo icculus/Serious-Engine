@@ -227,7 +227,7 @@ static void calcModExt(char *full, const char *exePath, const char *gamename)
     StrRev(pstrFin);
     strncpy( strDirPath, pstrFin, sizeof(strDirPath)-1);
     strDirPath[sizeof(strDirPath)-1] = 0;
-    strcat(strDirPath, "/ModExt.txt");
+    strcat(strDirPath, "/ModEXT.txt");
 
     if (access(strDirPath, F_OK) == 0)
     {
