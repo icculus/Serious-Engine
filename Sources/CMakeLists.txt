@@ -604,7 +604,7 @@ option(BUILD_DEDICATED_SERVER "Compile the dedicated server, too" FALSE)
 if(BUILD_DEDICATED_SERVER)
     add_executable(SeriousSamDedicated ${ENGINE_SRCS} DedicatedServer/DedicatedServer.cpp)
     add_dependencies(SeriousSamDedicated ParseAllEntities)
-)
+endif()
 
 if(MACOSX)
     find_library(COCOA_FRAMEWORK Cocoa)
