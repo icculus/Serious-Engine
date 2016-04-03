@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.7)
 project(SeriousEngine)
 
 # Set @rpath for Mac OS X shared library install names.
-cmake_policy(SET CMP0042 NEW)
+#cmake_policy(SET CMP0042 NEW)
 
 # Needed to find the SDL1.2 library files
 find_package(SDL REQUIRED)
@@ -381,7 +381,7 @@ if (USE_I386_ASM)
     list(APPEND ADDITIONAL_ENGINE_SRCS SoundMixer386.o)
 endif()
 
-add_library(SeriousEngine STATIC
+set(ENGINE_SRCS
     ${ENGINE_ENTITIES_CPP}
     Engine/Engine.cpp
     Engine/Base/Anim.cpp
@@ -579,9 +579,9 @@ add_library(SeriousEngine STATIC
     Engine/zlib/uncompr.c
     ${ADDITIONAL_ENGINE_SRCS}
 )
-add_dependencies(SeriousEngine ParseAllEntities)
 
 add_executable(SeriousSam
+    ${ENGINE_SRCS}
     SeriousSam/LevelInfo.cpp
     SeriousSam/CmdLine.cpp
     SeriousSam/SeriousSam.cpp
@@ -595,23 +595,27 @@ add_executable(SeriousSam
     SeriousSam/SplashScreen.cpp
     SeriousSam/MainWindow.cpp
 )
-target_link_libraries(SeriousSam ${CMAKE_BINARY_DIR}/libSeriousEngine.a ${SDL_LIBRARY})
 add_dependencies(SeriousSam ParseAllEntities)
 
-add_executable(SeriousSamDedicated
-    DedicatedServer/DedicatedServer.cpp
+# !!! FIXME: this is an option because you have to recompile the entire engine twice.
+# !!! FIXME:  If we can put the engine in a static library and not lose symbols,
+# !!! FIXME:  that's a better plan and we can remove the toggle here.
+option(BUILD_DEDICATED_SERVER "Compile the dedicated server, too" FALSE)
+if(BUILD_DEDICATED_SERVER)
+    add_executable(SeriousSamDedicated ${ENGINE_SRCS} DedicatedServer/DedicatedServer.cpp)
+    add_dependencies(SeriousSamDedicated ParseAllEntities)
 )
-target_link_libraries(SeriousSamDedicated ${CMAKE_BINARY_DIR}/libSeriousEngine.a ${SDL_LIBRARY})
-add_dependencies(SeriousSamDedicated ParseAllEntities)
 
 if(MACOSX)
     find_library(COCOA_FRAMEWORK Cocoa)
     target_link_libraries(SeriousSam "${COCOA_FRAMEWORK}")
     target_link_libraries(SeriousSam "${CMAKE_CURRENT_SOURCE_DIR}/lib/macosx/libSDL-1.2.0.dylib")
     target_link_libraries(SeriousSam "${CMAKE_CURRENT_SOURCE_DIR}/lib/macosx/libSDLmain.a")
-    target_link_libraries(SeriousSamDedicated "${COCOA_FRAMEWORK}")
-    target_link_libraries(SeriousSamDedicated "${CMAKE_CURRENT_SOURCE_DIR}/lib/macosx/libSDL-1.2.0.dylib")
-    target_link_libraries(SeriousSamDedicated "${CMAKE_CURRENT_SOURCE_DIR}/lib/macosx/libSDLmain.a")
+    if(BUILD_DEDICATED_SERVER)
+        target_link_libraries(SeriousSamDedicated "${COCOA_FRAMEWORK}")
+        target_link_libraries(SeriousSamDedicated "${CMAKE_CURRENT_SOURCE_DIR}/lib/macosx/libSDL-1.2.0.dylib")
+        target_link_libraries(SeriousSamDedicated "${CMAKE_CURRENT_SOURCE_DIR}/lib/macosx/libSDLmain.a")
+    endif()
 endif()
 
 if(LINUX)
@@ -619,11 +623,15 @@ if(LINUX)
     target_link_libraries(SeriousSam "m")
     target_link_libraries(SeriousSam "dl")
     target_link_libraries(SeriousSam "pthread")
+    target_link_libraries(SeriousSam ${SDL_LIBRARY})
 
-    set_target_properties(SeriousSamDedicated PROPERTIES LINK_FLAGS "-Wl,-rpath,$ORIGIN")
-    target_link_libraries(SeriousSamDedicated "m")
-    target_link_libraries(SeriousSamDedicated "dl")
-    target_link_libraries(SeriousSamDedicated "pthread")
+    if(BUILD_DEDICATED_SERVER)
+        set_target_properties(SeriousSamDedicated PROPERTIES LINK_FLAGS "-Wl,-rpath,$ORIGIN")
+        target_link_libraries(SeriousSamDedicated "m")
+        target_link_libraries(SeriousSamDedicated "dl")
+        target_link_libraries(SeriousSamDedicated "pthread")
+	target_link_libraries(SeriousSamDedicated ${SDL_LIBRARY})
+    endif()
 endif()
 
 # end of CMakeLists.txt ...
