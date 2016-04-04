@@ -134,8 +134,10 @@ static struct ErrorCode ErrorCodes[] = {
   ERRORCODE(ENODEV            , "ENODEV"),
   ERRORCODE(ECONNRESET        , "ECONNRESET"),
   ERRORCODE(ENOTCONN          , "ENOTCONN"),
-  #if !PLATFORM_MACOSX
+  #ifdef ENOSR
   ERRORCODE(ENOSR             , "ENOSR"),
+  #endif
+  #ifdef ENOPKG
   ERRORCODE(ENOPKG            , "ENOPKG"),
   #endif
 #endif
