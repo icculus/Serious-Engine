@@ -8,7 +8,7 @@ project(SeriousEngine)
 find_package(SDL REQUIRED)
 
 # Set up some sanity stuff...
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME MATCHES "GNU|kFreeBSD")
     SET(LINUX TRUE)
 endif()
 if(APPLE)
