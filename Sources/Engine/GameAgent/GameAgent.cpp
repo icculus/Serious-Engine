@@ -34,6 +34,7 @@ typedef int socklen_t;
 #else
 #include <fcntl.h>
 #include <netdb.h>
+#include <pthread.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -1029,7 +1030,28 @@ extern void GameAgent_EnumUpdate(void)
   }
  } else {
  #ifndef PLATFORM_WIN32
- STUBBED("write me");
+ //STUBBED("write me");
+ /* MSLegacy LinuxPort */
+    if(_bActivated) {
+        pthread_t  	_hThread;
+        int   		_iThreadId;
+
+        _iThreadId = pthread_create(&_hThread, NULL, _MS_Thread, NULL);
+        if (_iThreadId == 0) {
+            pthread_detach(_hThread);
+        }
+        _bActivated = FALSE;		
+    }
+    if(_bActivatedLocal) {
+        pthread_t  _hThread;
+        int   	   _iThreadId;
+
+        _iThreadId = pthread_create(&_hThread, NULL, _LocalNet_Thread, NULL);
+        if (_iThreadId == 0) {
+            pthread_detach(_hThread);
+        }
+        _bActivatedLocal = FALSE;		
+    }	 
  #else
  /* MSLegacy */
     if(_bActivated) {
@@ -1068,6 +1090,10 @@ extern void GameAgent_EnumCancel(void)
 
 #ifdef PLATFORM_WIN32
 DWORD WINAPI _MS_Thread(LPVOID lpParam) {
+#else
+void*        _MS_Thread(void *arg) {
+#endif
+
     SOCKET _sockudp = NULL;
     struct _sIPPort {
         UBYTE bFirst;
@@ -1266,7 +1292,12 @@ DWORD WINAPI _MS_Thread(LPVOID lpParam) {
     return 0;
 }
 
+#ifdef PLATFORM_WIN32
 DWORD WINAPI _LocalNet_Thread(LPVOID lpParam) {
+#else
+void*        _LocalNet_Thread(void *arg) {
+#endif
+
     SOCKET _sockudp = NULL;
     struct _sIPPort {
         UBYTE bFirst;
@@ -1477,5 +1508,5 @@ DWORD WINAPI _LocalNet_Thread(LPVOID lpParam) {
     WSACleanup();
     return 0;
 }
-#endif
+
 

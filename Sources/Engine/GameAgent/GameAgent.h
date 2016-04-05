@@ -38,10 +38,16 @@ extern void GameAgent_EnumTrigger(BOOL bInternet);
 extern void GameAgent_EnumUpdate(void);
 /// Cancel the GameAgent serverlist enumeration.
 extern void GameAgent_EnumCancel(void);
-///
+
+#ifdef PLATFORM_WIN32
 DWORD WINAPI _MS_Thread(LPVOID lpParam);
 ///
 DWORD WINAPI _LocalNet_Thread(LPVOID lpParam);
+#else
+void* _MS_Thread(void *arg);
+///
+void* _LocalNet_Thread(void *arg);
+#endif
 
 /// Server request structure. Primarily used for getting server pings.
 class CServerRequest {
