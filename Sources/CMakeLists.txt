@@ -66,6 +66,10 @@ if(LINUX OR MACOSX)
     endif(DEBUG)
     add_definitions(-pthread)
     add_definitions(-pipe -fsigned-char)
+    add_definitions(-m32)
+    # !!! FIXME: (?) apperently add_definitions doesn't change
+    # !!! FIXME:     CXX Flags too..
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
     #CXXFLAGS += -fexceptions -frtti
 endif()
 
