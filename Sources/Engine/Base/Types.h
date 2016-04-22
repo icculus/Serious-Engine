@@ -26,18 +26,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Engine/Base/Base.h>
 #include <Engine/Graphics/gl_types.h>
 
-// !!! FIXME: use stdint.h for this (and other things like INDEX, too)?
-#ifdef PLATFORM_WIN32
-typedef signed int    SLONG;
-typedef signed short int    SWORD;
-typedef signed char         SBYTE;
-typedef signed int          SINT;
-
-typedef unsigned int  ULONG;
-typedef unsigned short int  UWORD;
-typedef unsigned char       UBYTE;
-typedef unsigned int        UINT;
-#else
 #include <stdint.h>
 // use the defined typesizes from MSDN to create an equivalent translation on
 // non windows platforms
@@ -50,7 +38,6 @@ typedef uint32_t ULONG;
 typedef uint16_t UWORD;
 typedef uint8_t  UBYTE;
 typedef uint32_t UINT;
-#endif
 
 // Flip this to 1 to turn off these messages everywhere.
 // !!! FIXME: I have it forced off for Windows because fprintf.
@@ -342,15 +329,9 @@ MY_STATIC_ASSERT(size_tSize, sizeof(size_t) == sizeof(void*));
 #define MAX_UWORD ((UWORD)0xFFFF)
 #define MAX_UBYTE ((UBYTE)0xFF)
 
-#ifdef PLATFORM_WIN32
-typedef int BOOL;		        // this is for TRUE/FALSE
-typedef int RESULT;		// for error codes
-typedef int INDEX;     // for indexed values and quantities
-#else 
 typedef int32_t BOOL;		        // this is for TRUE/FALSE
 typedef int32_t RESULT;		// for error codes
 typedef int32_t INDEX;     // for indexed values and quantities
-#endif 
 
 #define FALSE 0
 #define TRUE  1
