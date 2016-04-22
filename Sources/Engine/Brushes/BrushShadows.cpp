@@ -634,8 +634,8 @@ BOOL CBrushShadowMap::IsShadowFlat( COLOR &colFlat)
       const SLONG slAvgR = ((ULONG)ubR + ubR1) /2;
       const SLONG slAvgG = ((ULONG)ubG + ubG1) /2;
       const SLONG slAvgB = ((ULONG)ubB + ubB1) /2;
-      if( gp.gp_bDark) { slR -= slAvgR;  slG -= slAvgR;  slB -= slAvgR; }
-      else             { slR += slAvgR;  slG += slAvgR;  slB += slAvgR; }
+      if( gp.gp_bDark) { slR -= slAvgR;  slG -= slAvgG;  slB -= slAvgB; }
+      else             { slR += slAvgR;  slG += slAvgG;  slB += slAvgB; }
     }
   }
 
