@@ -474,6 +474,7 @@ functions:
         case 1: iAnim = STONEMAN_ANIM_WOUND02; break;
         default: iAnim = STONEMAN_ANIM_WOUND03; break;
       }*/
+      ASSERT(false);
     }
     StartModelAnim(iAnim, 0);
     return iAnim;
@@ -539,6 +540,7 @@ functions:
       iAnim = ELEMENTALLAVA_ANIM_DEATH03;
     } else {
 //      iAnim = STONEMAN_ANIM_DEATH03;
+      ASSERT(false);
     }
     StartModelAnim(iAnim, 0);
     return iAnim;
@@ -1266,6 +1268,7 @@ procedures:
       iAnim = ELEMENTALLAVA_ANIM_MELTUP;
     } else {
 //      iAnim = STONEMAN_ANIM_MORPHPLANEUP;
+      ASSERT(false);
     }
     StartModelAnim(iAnim, 0);
     AddAttachments();
