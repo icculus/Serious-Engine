@@ -251,6 +251,10 @@ static int _iMouseZ = 0;
 static BOOL _bWheelUp = FALSE;
 static BOOL _bWheelDn = FALSE;
 
+// emulate Win32: A single mouse wheel rotation
+// is +120 (upwards) or -120 (downwards)
+#define MOUSE_SCROLL_INTERVAL 120
+
 CTCriticalSection csInput;
 
 // which keys are pressed, as recorded by message interception (by KIDs)
@@ -319,10 +323,7 @@ static void sdl_event_handler(const SDL_Event *event)
             break;
 
         case SDL_MOUSEWHEEL:
-            if (event->wheel.y > 0)
-                _abKeysPressed[KID_MOUSEWHEELUP] = TRUE;
-            else if (event->wheel.y < 0)
-                _abKeysPressed[KID_MOUSEWHEELDOWN] = TRUE;
+            _iMouseZ += event->wheel.y * MOUSE_SCROLL_INTERVAL;
             break;
 
         case SDL_KEYDOWN:
@@ -744,10 +745,6 @@ void CInput::GetInput(BOOL bPreScan)
     }
   }
 
-  // reset this every frame (since we explicitly ignore the button-up events).
-  _abKeysPressed[KID_MOUSEWHEELUP] = FALSE;
-  _abKeysPressed[KID_MOUSEWHEELDOWN] = FALSE;
-
   // read mouse position
   #ifdef USE_MOUSEWARP
   int iMx, iMy;
@@ -816,17 +813,16 @@ void CInput::GetInput(BOOL bPreScan)
   }
   #endif
 
-/*
   // if not pre-scanning
   if (!bPreScan) {
     // detect wheel up/down movement
-    _bWheelDn = FALSE;
+
     if (_iMouseZ>0) {
       if (_bWheelUp) {
         inp_ubButtonsBuffer[KID_MOUSEWHEELUP] = 0x00;
       } else {
         inp_ubButtonsBuffer[KID_MOUSEWHEELUP] = 0xFF;
-        _iMouseZ = ClampDn(_iMouseZ-120, 0);
+        _iMouseZ = ClampDn(_iMouseZ-MOUSE_SCROLL_INTERVAL, 0);
       }
     }
     _bWheelUp = inp_ubButtonsBuffer[KID_MOUSEWHEELUP];
@@ -835,12 +831,11 @@ void CInput::GetInput(BOOL bPreScan)
         inp_ubButtonsBuffer[KID_MOUSEWHEELDOWN] = 0x00;
       } else {
         inp_ubButtonsBuffer[KID_MOUSEWHEELDOWN] = 0xFF;
-        _iMouseZ = ClampUp(_iMouseZ+120, 0);
+        _iMouseZ = ClampUp(_iMouseZ+MOUSE_SCROLL_INTERVAL, 0);
       }
     }
     _bWheelDn = inp_ubButtonsBuffer[KID_MOUSEWHEELDOWN];
   }
-*/
 
   inp_bLastPrescan = bPreScan;
 
