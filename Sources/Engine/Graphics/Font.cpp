@@ -99,7 +99,7 @@ void CFontData::Read_t( CTStream *inFile) // throw char *
   SetCharSpacing(+1);
   SetLineSpacing(+1);
   SetSpaceWidth(0.5f);
-  fd_fcdFontCharData[' '].fcd_pixStart = 0;
+  fd_fcdFontCharData[(int)' '].fcd_pixStart = 0;
 }
 
 void CFontData::Write_t( CTStream *outFile) // throw char *
@@ -201,7 +201,7 @@ void CFontData::Make_t( const CTFileName &fnTexture, PIX pixCharWidth, PIX pixCh
     iLetter++;  // skip carriage return
   }
   // set default space width
-  fd_fcdFontCharData[' '].fcd_pixStart = 0;
+  fd_fcdFontCharData[(int)' '].fcd_pixStart = 0;
   SetSpaceWidth(0.5f);
 
   // all done
