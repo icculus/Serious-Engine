@@ -688,6 +688,7 @@ inline const CEntityPointer &CEntityPointer::operator=(const CEntityPointer &pen
   return *this;
 }
 inline CEntity* CEntityPointer::operator->(void) const { return ep_pen; }
+inline CEntity* CEntityPointer::get(void) const { return ep_pen; }
 inline CEntityPointer::operator CEntity*(void) const { return ep_pen; }
 inline CEntity& CEntityPointer::operator*(void) const { return *ep_pen; }
 

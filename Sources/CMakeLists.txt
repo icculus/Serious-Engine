@@ -121,7 +121,6 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 
 	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
 		# !!! FIXME: turn a bunch of these off, this is just for now. I hope.  --ryan.
-		add_compile_options(-Wno-tautological-undefined-compare)
 		add_compile_options(-Wno-c++11-compat-deprecated-writable-strings)
 		add_compile_options(-Wno-logical-op-parentheses) # FIXME: this too should be re-enabled
 	endif()

@@ -1111,10 +1111,10 @@ void CObjectPolygon::JoinContinuingEdges(CDynamicArray<CObjectEdge> &oedEdges)
 
   // for each edge
   {FOREACHINDYNAMICARRAY(opo_PolygonEdges, CObjectPolygonEdge, itope) {
-    CObjectEdge &oedThis = *itope->ope_Edge;
+    CObjectEdge *poedThis = itope->ope_Edge;
 
     // if not already marked for removal
-    if (&oedThis != NULL) {
+    if (poedThis != NULL) {
       CObjectVertex *povxStartThis, *povxEndThis;
       // get start and end vertices
       itope->GetVertices(povxStartThis, povxEndThis);
@@ -1129,12 +1129,12 @@ void CObjectPolygon::JoinContinuingEdges(CDynamicArray<CObjectEdge> &oedEdges)
 
         // for each edge
         {FOREACHINDYNAMICARRAY(opo_PolygonEdges, CObjectPolygonEdge, itope2) {
-          CObjectEdge &oedOther = *itope2->ope_Edge;
+          CObjectEdge *poedOther = itope2->ope_Edge;
 
           // if not already marked for removal
-          if (&oedOther != NULL) {
+          if (poedOther != NULL) {
             // if the two edges are collinear
-            if ( CompareEdgeLines(*oedThis.colinear2.oed_pedxLine, *oedOther.colinear2.oed_pedxLine)==0) {
+            if ( CompareEdgeLines(*poedThis->colinear2.oed_pedxLine, *poedOther->colinear2.oed_pedxLine)==0) {
               CObjectVertex *povxStartOther, *povxEndOther;
               // get start and end vertices
               itope2->GetVertices(povxStartOther, povxEndOther);

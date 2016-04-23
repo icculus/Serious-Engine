@@ -35,6 +35,7 @@ public:
   inline const CEntityPointer &operator=(CEntity *pen);
   inline const CEntityPointer &operator=(const CEntityPointer &penOther);
   inline CEntity* operator->(void) const;
+  inline CEntity* get(void) const;
   inline operator CEntity*(void) const;
   inline CEntity& operator*(void) const;
 };
