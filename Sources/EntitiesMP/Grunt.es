@@ -99,7 +99,7 @@ functions:
     } else if (m_gtType==GT_COMMANDER) {
       return &eiGruntSoldier;
     } else {
-      ASSERT("Unknown grunt type!");
+      ASSERT(false && "Unknown grunt type!");
       return NULL;
     }
   };
