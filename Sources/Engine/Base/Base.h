@@ -61,17 +61,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     #define PLATFORM_LINUX 1
   #endif
 #elif (defined __APPLE__)
-  #include "TargetConditionals.h"
-  #if TARGET_OS_MAC
     #define PLATFORM_MACOSX 1
-  #else
-    #error "Unsupported apple platform"
-  #endif
 #else
   #warning "UNKNOWN PLATFORM IDENTIFIED!!!!"
   #define PLATFORM_UNKNOWN 1
   #warning "USING PORTABLE C!!!"
-  #define USE_PORTABLE_C 
+  #define USE_PORTABLE_C
 #endif 
 
 #if PLATFORM_LINUX || PLATFORM_MACOSX
