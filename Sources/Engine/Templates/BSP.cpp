@@ -956,7 +956,6 @@ template<class Type, int iDimensions>
 BSPNode<Type, iDimensions> *BSPTree<Type, iDimensions>::CreateSubTree(CDynamicArray<BSPPolygon<Type, iDimensions> > &abpoPolygons)
 {
   // local declarations, to fix macro expansion in FOREACHINDYNAMICARRAY
-  typedef BSPEdge<Type, iDimensions> edge_t;
   typedef BSPPolygon<Type, iDimensions> polygon_t;
   ASSERT(abpoPolygons.Count()>=1);
 
@@ -1042,8 +1041,6 @@ BSPNode<Type, iDimensions> *BSPTree<Type, iDimensions>::CreateSubTree(CDynamicAr
 template<class Type, int iDimensions>
 void BSPTree<Type, iDimensions>::Create(CDynamicArray<BSPPolygon<Type, iDimensions> > &abpoPolygons)
 {
-  typedef BSPPolygon<Type, iDimensions> polygon_t; // local declaration, to fix macro expansion in FOREACHINDYNAMICARRAY
-
   // free eventual existing tree
   Destroy();
 
