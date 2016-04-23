@@ -1627,7 +1627,7 @@ void CGfxLibrary::CreateWindowCanvas(void *hWnd, CViewPort **ppvpNew, CDrawPort 
   *ppvpNew = NULL;
   *ppdpNew = NULL;
   // create a new viewport
-  if (*ppvpNew = new CViewPort( pixWidth, pixHeight, (HWND)hWnd)) {
+  if ((*ppvpNew = new CViewPort( pixWidth, pixHeight, (HWND)hWnd))) {
     // and it's drawport
 		*ppdpNew = &(*ppvpNew)->vp_Raster.ra_MainDrawPort;
   } else {

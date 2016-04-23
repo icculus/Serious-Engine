@@ -117,7 +117,6 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 	add_compile_options(-Wno-unused-value)
 	add_compile_options(-Wno-reorder)
 	add_compile_options(-Wno-unused-but-set-variable)
-	add_compile_options(-Wno-parentheses)
 	MESSAGE(WARNING, "re-enable some of the warnings some day!")
 
 	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
