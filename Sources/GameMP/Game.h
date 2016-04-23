@@ -86,9 +86,9 @@ public:
   CTString ba_strCommandLineWhenPressed;
   CTString ba_strCommandLineWhenReleased;
   // Assignment operator.
-  virtual CButtonAction &operator=(const CButtonAction &baOriginal);
-  virtual void Read_t( CTStream &istrm);    // throw char*
-  virtual void Write_t( CTStream &ostrm);    // throw char*
+  CButtonAction &operator=(const CButtonAction &baOriginal);
+  void Read_t( CTStream &istrm);    // throw char*
+  void Write_t( CTStream &ostrm);    // throw char*
 };
 
 /*
