@@ -3442,7 +3442,7 @@ functions:
         return (WeaponType)i;
       }
     }
-    ASSERT(false && "Non-existant weapon in remap array!");
+    ASSERTALWAYS("Non-existant weapon in remap array!");
     return (WeaponType)0;
   }
 

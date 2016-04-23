@@ -83,7 +83,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #define BREAKPOINT                                                \
     if (1) {					                                              \
       SAFEBREAKPOINT;                                               \
-      _assert(false && "hard-coded breakpoint (CroTeam)",__FILE__,__LINE__); \
+      _assert("hard-coded breakpoint (CroTeam)",__FILE__,__LINE__); \
     } else NOTHING
 
   /* CT DEBUG macro -- the expression is executed only in debug version */

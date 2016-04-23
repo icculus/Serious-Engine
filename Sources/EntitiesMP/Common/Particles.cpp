@@ -527,7 +527,7 @@ void Particles_ViewerLocal(CEntity *penView)
         break;
         
       default:
-        ASSERT(false && "Unknown environment particle type!");
+        ASSERTALWAYS("Unknown environment particle type!");
         break;
       }
     // for those EPHs that are not rendered, clear possible
