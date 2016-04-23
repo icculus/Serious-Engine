@@ -2036,10 +2036,7 @@ static CStaticStackArray<CSentEvent> _aseSentEvents;  // delayed events
 /* Send an event to this entity. */
 void CEntity::SendEvent(const CEntityEvent &ee)
 {
-  if (this==NULL) {
-    ASSERT(FALSE);
-    return;
-  }
+  ASSERT(this!=NULL);
   CSentEvent &se = _aseSentEvents.Push();
   se.se_penEntity = this;
   se.se_peeEvent = ((CEntityEvent&)ee).MakeCopy();  // discard const qualifier
