@@ -810,7 +810,7 @@ void CRenderer::ScanEdges(void)
       CopyActiveCoordinates();
 
     // if scan-line is not coherent with the last one
-    } else/**/ {
+    } else*/ {
 
       // scan list of active edges into spans
       pspoPortal = ScanOneLine();

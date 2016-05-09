@@ -908,8 +908,8 @@ functions:
       }
     }
     // apply cannon draw
-    else if( (m_iCurrentWeapon == WEAPON_IRONCANNON) /*||
-             (m_iCurrentWeapon == WEAPON_NUKECANNON) */)
+    else if( m_iCurrentWeapon == WEAPON_IRONCANNON /*||
+             m_iCurrentWeapon == WEAPON_NUKECANNON */)
     {
       FLOAT fLerpedMovement = Lerp(m_fWeaponDrawPowerOld, m_fWeaponDrawPower, _pTimer->GetLerpFactor());
       plPos(3) += fLerpedMovement;
@@ -3385,7 +3385,7 @@ procedures:
       GetAnimator()->FireAnimation(BODY_ANIM_SHOTGUN_FIRESHORT, AOF_LOOPING);
     } else if (m_iCurrentWeapon==WEAPON_TOMMYGUN) {
       autocall TommyGunStart() EEnd;
-    } else if ((m_iCurrentWeapon==WEAPON_IRONCANNON) /*|| (m_iCurrentWeapon==WEAPON_NUKECANNON)*/) {
+    } else if (m_iCurrentWeapon==WEAPON_IRONCANNON /*|| m_iCurrentWeapon==WEAPON_NUKECANNON*/) {
       jump CannonFireStart();
     }
 

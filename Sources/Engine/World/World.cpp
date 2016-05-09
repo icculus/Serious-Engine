@@ -934,10 +934,11 @@ void CWorld::TriangularizeForVertices( CBrushVertexSelection &selVertex)
 // add this entity to prediction
 void CEntity::AddToPrediction(void)
 {
-  // this function may be called even for NULLs - so ignore it
-  if (this==NULL) {
-    return;
-  }
+  // this function may be called even for NULLs - TODO: fix those cases
+  //   (The compiler is free to assume that "this" is never NULL and optimize
+  //   based on that assumption. For example, an "if (this==NULL) {...}" could
+  //   be optimized away completely.)
+  ASSERT(this!=NULL);
   // if already added
   if (en_ulFlags&ENF_WILLBEPREDICTED) {
     // do nothing

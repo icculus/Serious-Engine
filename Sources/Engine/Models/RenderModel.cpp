@@ -240,7 +240,7 @@ BOOL CModelObject::CreateAttachment( CRenderModel &rmMain, CAttachmentModelObjec
   _pfModelProfile.StartTimer( CModelProfile::PTI_CREATEATTACHMENT);
   _pfModelProfile.IncrementTimerAveragingCounter( CModelProfile::PTI_CREATEATTACHMENT);
   CRenderModel &rmAttached = *amo.amo_prm;
-  rmAttached.rm_ulFlags = rmMain.rm_ulFlags&(RMF_FOG|RMF_HAZE|RMF_WEAPON) | RMF_ATTACHMENT;
+  rmAttached.rm_ulFlags = (rmMain.rm_ulFlags&(RMF_FOG|RMF_HAZE|RMF_WEAPON)) | RMF_ATTACHMENT;
 
   // get the position
   rmMain.rm_pmdModelData->md_aampAttachedPosition.Lock();

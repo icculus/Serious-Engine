@@ -779,23 +779,23 @@ CScreenPolygon *CRenderer::MakeScreenPolygon(CBrushPolygon &bpo)
 void CRenderer::AddPolygonToScene( CScreenPolygon *pspo)
 {
   // if the polygon is not falid or occluder and not selected 
-  CBrushPolygon &bpo = *pspo->spo_pbpoBrushPolygon;
-  if( &bpo==NULL || ((bpo.bpo_ulFlags&BPOF_OCCLUDER) && (!(bpo.bpo_ulFlags&BPOF_SELECTED) ||
+  CBrushPolygon *pbpo = pspo->spo_pbpoBrushPolygon;
+  if(pbpo==NULL || ((pbpo->bpo_ulFlags&BPOF_OCCLUDER) && (!(pbpo->bpo_ulFlags&BPOF_SELECTED) ||
       _wrpWorldRenderPrefs.GetSelectionType()!=CWorldRenderPrefs::ST_POLYGONS))) {
     // do not add it to rendering
     return;
   }
-  CBrushSector &bsc  = *bpo.bpo_pbscSector;
+  CBrushSector &bsc  = *pbpo->bpo_pbscSector;
   ScenePolygon &sppo = pspo->spo_spoScenePolygon;
   const CViewVertex *pvvx0 = &re_avvxViewVertices[bsc.bsc_ivvx0];
-  const INDEX ctVtx = bpo.bpo_apbvxTriangleVertices.Count();
+  const INDEX ctVtx = pbpo->bpo_apbvxTriangleVertices.Count();
   sppo.spo_iVtx0    = _avtxScene.Count();
   GFXVertex3 *pvtx  = _avtxScene.Push(ctVtx);
 
   // find vertex with nearest Z distance while copying vertices
   FLOAT fNearestZ = 123456789.0f;
   for( INDEX i=0; i<ctVtx; i++) {
-    CBrushVertex *pbvx = bpo.bpo_apbvxTriangleVertices[i];
+    CBrushVertex *pbvx = pbpo->bpo_apbvxTriangleVertices[i];
     const INDEX iVtx = bsc.bsc_abvxVertices.Index(pbvx);
     const FLOAT3D &v = pvvx0[iVtx].vvx_vView;
     if( -v(3)<fNearestZ) fNearestZ = -v(3);  // inverted because of negative sign
@@ -809,8 +809,8 @@ void CRenderer::AddPolygonToScene( CScreenPolygon *pspo)
 
   // all done
   sppo.spo_ctVtx = ctVtx;
-  sppo.spo_ctElements =  bpo.bpo_aiTriangleElements.Count();
-  sppo.spo_piElements = sppo.spo_ctElements ? &bpo.bpo_aiTriangleElements[0] : NULL;
+  sppo.spo_ctElements =  pbpo->bpo_aiTriangleElements.Count();
+  sppo.spo_piElements = sppo.spo_ctElements ? &pbpo->bpo_aiTriangleElements[0] : NULL;
   _sfStats.IncrementCounter(CStatForm::SCI_SCENE_TRIANGLES, sppo.spo_ctElements/3);
 }
 

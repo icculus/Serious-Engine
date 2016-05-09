@@ -1101,8 +1101,8 @@ functions:
       }
     }
     // apply cannon draw
-    else if( (m_iCurrentWeapon == WEAPON_IRONCANNON) /*||
-             (m_iCurrentWeapon == WEAPON_NUKECANNON) */)
+    else if( m_iCurrentWeapon == WEAPON_IRONCANNON /*||
+             m_iCurrentWeapon == WEAPON_NUKECANNON */)
     {
       FLOAT fLerpedMovement = Lerp(m_fWeaponDrawPowerOld, m_fWeaponDrawPower, _pTimer->GetLerpFactor());
       plPos(3) += fLerpedMovement;
@@ -3442,7 +3442,7 @@ functions:
         return (WeaponType)i;
       }
     }
-    ASSERT("Non-existant weapon in remap array!");
+    ASSERTALWAYS("Non-existant weapon in remap array!");
     return (WeaponType)0;
   }
 
@@ -4008,7 +4008,7 @@ procedures:
       GetAnimator()->FireAnimation(BODY_ANIM_SHOTGUN_FIRESHORT, AOF_LOOPING);
     } else if (m_iCurrentWeapon==WEAPON_TOMMYGUN) {
       autocall TommyGunStart() EEnd;
-    } else if ((m_iCurrentWeapon==WEAPON_IRONCANNON) /*|| (m_iCurrentWeapon==WEAPON_NUKECANNON)*/) {
+    } else if (m_iCurrentWeapon==WEAPON_IRONCANNON /*|| m_iCurrentWeapon==WEAPON_NUKECANNON*/) {
       jump CannonFireStart();
     }
 

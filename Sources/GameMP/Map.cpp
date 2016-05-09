@@ -674,6 +674,7 @@ void RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi)
     
     INDEX iPosX, iPosY;
     COLOR colText = RGBToColor(200,128,56)|CT_OPAQUE;
+    PIX pixhtcx, pixhtcy;
 
     if(!map_bIsFirstEncounter) {
       // set coordinates and dot colors
@@ -686,12 +687,9 @@ void RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi)
         iPosY = 403;
         colText = 0xc87832ff;
       }
-    }
-
-    PIX pixhtcx = (PIX) (pixC1S+iPosX*fStretch);
-    PIX pixhtcy = (PIX) (pixR1S+iPosY*fStretch);
-
-    if(map_bIsFirstEncounter) {
+      pixhtcx = (PIX) (pixC1S+iPosX*fStretch);
+      pixhtcy = (PIX) (pixR1S+iPosY*fStretch);
+    } else {
       pixhtcx = pixC1S+116*fStretch;
       pixhtcy = pixR1S+220*fStretch;
     }

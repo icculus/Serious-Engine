@@ -688,24 +688,23 @@ inline const CEntityPointer &CEntityPointer::operator=(const CEntityPointer &pen
   return *this;
 }
 inline CEntity* CEntityPointer::operator->(void) const { return ep_pen; }
+inline CEntity* CEntityPointer::get(void) const { return ep_pen; }
 inline CEntityPointer::operator CEntity*(void) const { return ep_pen; }
 inline CEntity& CEntityPointer::operator*(void) const { return *ep_pen; }
 
 /////////////////////////////////////////////////////////////////////
 // Reference counting functions
 inline void CEntity::AddReference(void) { 
-  if (this!=NULL) {
-    ASSERT(en_ctReferences>=0);
-    en_ctReferences++; 
-  }
+  ASSERT(this!=NULL);
+  ASSERT(en_ctReferences>=0);
+  en_ctReferences++; 
 };
 inline void CEntity::RemReference(void) { 
-  if (this!=NULL) {
-    ASSERT(en_ctReferences>0);
-    en_ctReferences--;
-    if(en_ctReferences==0) {
-      delete this;
-    }
+  ASSERT(this!=NULL);
+  ASSERT(en_ctReferences>0);
+  en_ctReferences--;
+  if(en_ctReferences==0) {
+    delete this;
   }
 };
 

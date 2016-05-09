@@ -269,7 +269,7 @@ void PrepareSmothVertices(INDEX itt)
   GFXVertex *pvBorderSrc = pavSrc;
 
   for(INDEX ivx=tt.tt_ctNonBorderVertices;ivx<ctVertices;ivx++) {
-    //*pavDst++ = *pavSrc++;
+    // *pavDst++ = *pavSrc++;
     pvBorderDst[0] = pvBorderSrc[0];
     pvBorderDst++;
     pvBorderSrc++;

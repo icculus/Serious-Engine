@@ -71,7 +71,7 @@ public:
   inline void SetFixedWidth(void)    { fd_bFixedWidth = TRUE; };
   inline void SetVariableWidth(void) { fd_bFixedWidth = FALSE; };
   inline void SetSpaceWidth( FLOAT fWidthRatio) { // relative to char cell width (1/2 is default)
-              fd_fcdFontCharData[' '].fcd_pixEnd = (PIX)(fd_pixCharWidth*fWidthRatio); }
+              fd_fcdFontCharData[(int)' '].fcd_pixEnd = (PIX)(fd_pixCharWidth*fWidthRatio); }
 
   void Read_t(  CTStream *inFile); // throw char *
   void Write_t( CTStream *outFile); // throw char *

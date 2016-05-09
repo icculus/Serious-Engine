@@ -312,7 +312,7 @@ BOOL PrepareHaze(void)
     // _fFogAddZ = _vViewer % (rm.rm_vObjectPosition - _aprProjection->pr_vViewerPosition);  // BUG in compiler !!!!
     _fFogAddZ = -_mObjToView[11];
     // get fog offset
-    _fFogAddH = _fog_fAddH;/*(
+    _fFogAddH = _fog_fAddH;(
       _vHDirView(1)*_mObjToView[3] +
       _vHDirView(2)*_mObjToView[7] +
       _vHDirView(3)*_mObjToView[11]) + _fog_fp.fp_fH3;
