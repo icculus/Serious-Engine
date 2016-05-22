@@ -7,6 +7,7 @@
 
 #ifdef PLATFORM_WIN32
 #include <io.h>
+#define ENABLE_IFEEL
 #endif
 
 #include "MainWindow.h"
@@ -379,7 +380,9 @@ CMGSlider mgControlsSensitivity;
 CMGTrigger mgControlsInvertTrigger;
 CMGTrigger mgControlsSmoothTrigger;
 CMGTrigger mgControlsAccelTrigger;
+#ifdef ENABLE_IFEEL
 CMGTrigger mgControlsIFeelTrigger;
+#endif ENABLE_IFEEL
 CMGButton mgControlsPredefined;
 CMGButton mgControlsAdvanced;
 
@@ -4187,6 +4190,7 @@ void CControlsMenu::Initialize_t(void)
   mgControlsInvertTrigger.mg_strTip = TRANS("invert up/down looking");
   TRIGGER_MG( mgControlsSmoothTrigger, 6.5, mgControlsInvertTrigger, mgControlsAccelTrigger, 
               TRANS("SMOOTH AXIS"), astrNoYes);
+#ifdef ENABLE_IFEEL
   mgControlsSmoothTrigger.mg_strTip = TRANS("smooth mouse/joystick movements");
   TRIGGER_MG( mgControlsAccelTrigger, 7.5, mgControlsSmoothTrigger, mgControlsIFeelTrigger, 
               TRANS("MOUSE ACCELERATION"), astrNoYes);
@@ -4194,13 +4198,23 @@ void CControlsMenu::Initialize_t(void)
   TRIGGER_MG( mgControlsIFeelTrigger, 8.5, mgControlsAccelTrigger, mgControlsPredefined, 
               TRANS("ENABLE IFEEL"), astrNoYes);
   mgControlsIFeelTrigger.mg_strTip = TRANS("enable support for iFeel tactile feedback mouse");
+#else //ENABLE_IFEEL
+  mgControlsSmoothTrigger.mg_strTip = TRANS("smooth mouse/joystick movements");
+  TRIGGER_MG( mgControlsAccelTrigger, 7.5, mgControlsSmoothTrigger, mgControlsPredefined, 
+              TRANS("MOUSE ACCELERATION"), astrNoYes);
+  mgControlsAccelTrigger.mg_strTip = TRANS("allow mouse acceleration");
+#endif //ENABLE_IFEEL
 
   mgControlsPredefined.mg_strText = TRANS("LOAD PREDEFINED SETTINGS");
   mgControlsPredefined.mg_iCenterI = 0;
   mgControlsPredefined.mg_boxOnScreen = BoxMediumRow(10);
   mgControlsPredefined.mg_bfsFontSize = BFS_MEDIUM;
   gm_lhGadgets.AddTail( mgControlsPredefined.mg_lnNode);
+#ifdef ENABLE_IFEEL
   mgControlsPredefined.mg_pmgUp   = &mgControlsIFeelTrigger;
+#else //ENABLE_IFEEL
+  mgControlsPredefined.mg_pmgUp   = &mgControlsSmoothTrigger;
+#endif //ENABLE_IFEEL
   mgControlsPredefined.mg_pmgDown = &mgControlsButtons;
   mgControlsPredefined.mg_pActivatedFunction = &StartControlsLoadMenu;
   mgControlsPredefined.mg_strTip = TRANS("load one of several predefined control settings");
@@ -4244,13 +4258,17 @@ void CControlsMenu::ObtainActionSettings(void)
   mgControlsInvertTrigger.mg_iSelected = ctrls.ctrl_bInvertLook ? 1 : 0;
   mgControlsSmoothTrigger.mg_iSelected = ctrls.ctrl_bSmoothAxes ? 1 : 0;
   mgControlsAccelTrigger .mg_iSelected = _pShell->GetINDEX("inp_bAllowMouseAcceleration") ? 1 : 0;
+#ifdef ENABLE_IFEEL
   mgControlsIFeelTrigger .mg_bEnabled = _pShell->GetINDEX("sys_bIFeelEnabled") ? 1 : 0;
   mgControlsIFeelTrigger .mg_iSelected = _pShell->GetFLOAT("inp_fIFeelGain")>0 ? 1 : 0;
+#endif //ENABLE_IFEEL
 
   mgControlsInvertTrigger.ApplyCurrentSelection();
   mgControlsSmoothTrigger.ApplyCurrentSelection();
   mgControlsAccelTrigger .ApplyCurrentSelection();
+#ifdef ENABLE_IFEEL
   mgControlsIFeelTrigger .ApplyCurrentSelection();
+#endif //ENABLE_IFEEL
 }
 
 void CControlsMenu::ApplyActionSettings(void)
@@ -4264,7 +4282,9 @@ void CControlsMenu::ApplyActionSettings(void)
   BOOL bInvert = mgControlsInvertTrigger.mg_iSelected != 0;
   BOOL bSmooth = mgControlsSmoothTrigger.mg_iSelected != 0;
   BOOL bAccel  = mgControlsAccelTrigger .mg_iSelected != 0;
+#ifdef ENABLE_IFEEL
   BOOL bIFeel  = mgControlsIFeelTrigger .mg_iSelected != 0;
+#endif //ENABLE_IFEEL
 
   if (INDEX(ctrls.ctrl_fSensitivity)!=INDEX(fSensitivity)) {
     ctrls.ctrl_fSensitivity = fSensitivity;
@@ -4272,7 +4292,9 @@ void CControlsMenu::ApplyActionSettings(void)
   ctrls.ctrl_bInvertLook = bInvert;
   ctrls.ctrl_bSmoothAxes = bSmooth;
   _pShell->SetINDEX("inp_bAllowMouseAcceleration", bAccel);
+#ifdef ENABLE_IFEEL
   _pShell->SetFLOAT("inp_fIFeelGain", bIFeel ? 1.0f : 0.0f);
+#endif //ENABLE_IFEEL
   ctrls.CalculateInfluencesForAllAxis();
 }
 
