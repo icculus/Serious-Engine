@@ -382,7 +382,7 @@ CMGTrigger mgControlsSmoothTrigger;
 CMGTrigger mgControlsAccelTrigger;
 #ifdef ENABLE_IFEEL
 CMGTrigger mgControlsIFeelTrigger;
-#endif ENABLE_IFEEL
+#endif //ENABLE_IFEEL
 CMGButton mgControlsPredefined;
 CMGButton mgControlsAdvanced;
 
