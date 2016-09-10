@@ -1926,10 +1926,8 @@ static void SizeToResolution(PIX pixSizeI, PIX pixSizeJ, INDEX &iRes)
       return;
     }
   }
-  // if still none found
-  ASSERT(FALSE);  // this should never happen
-  // return first one
-  iRes = 0;
+  // return last one (lowest resolution)
+  iRes = _ctResolutions-1;
 }
 
 
