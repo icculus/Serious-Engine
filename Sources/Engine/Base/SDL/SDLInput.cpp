@@ -724,7 +724,7 @@ void CInput::GetInput(BOOL bPreScan)
     // clear button's buffer
     memset( inp_ubButtonsBuffer, 0, sizeof( inp_ubButtonsBuffer));
 
-    Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
     // for each Key
     for (INDEX iKey=0; iKey<ARRAYCOUNT(_akcKeys); iKey++) {
       const KeyConversion &kc = _akcKeys[iKey];
