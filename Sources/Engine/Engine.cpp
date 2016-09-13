@@ -224,6 +224,7 @@ static void DetectCPU(void)
   sys_iCPUMHz = INDEX(_pTimer->tm_llCPUSpeedHZ/1E6);
 
   if( !bMMX) FatalError( TRANS("MMX support required but not present!"));
+#endif
 }
 
 static void DetectCPUWrapper(void)
