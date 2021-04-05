@@ -64,7 +64,7 @@ inline void CRC_AddFLOAT(ULONG &ulCRC, FLOAT f)
 // add memory block to a CRC value
 inline void CRC_AddBlock(ULONG &ulCRC, UBYTE *pubBlock, ULONG ulSize)
 {
-  for( INDEX i=0; i<ulSize; i++) CRC_AddBYTE( ulCRC, pubBlock[i]);
+  for( INDEX i=0; (ULONG)i<ulSize; i++) CRC_AddBYTE( ulCRC, pubBlock[i]);
 };
 
 // end crc calculation

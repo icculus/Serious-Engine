@@ -27,7 +27,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 struct TileLayer
 {
-  CStaticStackArray<INDEX>       tl_auiIndices;   // Array of indices for one layer
+  CStaticStackArray<INDEX_T>     tl_auiIndices;   // Array of indices for one layer
   CStaticStackArray<GFXColor>    tl_acColors;     // Array of colors for one layer
   CStaticStackArray<GFXTexCoord> tl_atcTexCoords; // Array of texcoords for one layer
   CStaticStackArray<GFXVertex>   tl_avVertices;   // Array of vertices  for one layer (used only if tile layer)
@@ -48,7 +48,7 @@ struct TileArrays
   CStaticStackArray<GFXTexCoord> ta_auvTexCoords; // Array of texcoords for one tile (not used in highest lod)
   CStaticStackArray<GFXTexCoord> ta_auvShadowMap; // Array of texcoords for shadow map
   CStaticStackArray<GFXTexCoord> ta_auvDetailMap; // Array of texcoords for detail map
-  CStaticStackArray<INDEX>       ta_auiIndices;   // Array of indices for one tile
+  CStaticStackArray<INDEX_T>     ta_auiIndices;   // Array of indices for one tile
   CStaticStackArray<TileLayer>   ta_atlLayers;    // Array if layers per tile (used only in highest lod)
   CTextureData                  *ta_ptdTopMap;    // Pointer to tile top map
 };

@@ -103,7 +103,7 @@ functions:
     // 3rd person view
     FLOAT fDistance = 1.0f;
     CPlacement3D pl = ((CPlayerEntity&) *m_penOwner).en_plViewpoint;
-    BOOL bFollowCrossHair;
+    BOOL bFollowCrossHair = TRUE;
 
     if (m_iViewType == VT_3RDPERSONVIEW) {
       // little above player eyes so it can be seen where he is firing

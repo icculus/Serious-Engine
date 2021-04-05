@@ -28,6 +28,8 @@ These have been modified to run correctly under the recent version of Windows. (
 Building
 --------
 
+Note that DEBUG build will certainely not work. There are still many assert in the engine, most of them are irrelevent and should be removed, but while it's not done, the assert will effectively kiils the engine when triger in Debug build. Use Release or RelWithDebInfo build if you intend to play (automatically set as RelWithDebInfo in the build scripts)
+
 ### Windows
 
 To build Serious Engine 1, you'll need Visual Studio 2013 or 2015, Professional or Community edition ( https://www.visualstudio.com/post-download-vs?sku=community ).
@@ -51,6 +53,9 @@ cd Serious-Engine
 
 If you have access to a copy of the game (either by CD or through Steam),
 you can copy the *.gro files from the game directory to the repository.
+Not that for running SS:TFE, you don't need the ModEXT.txt file, it's only for SS:TSE.
+
+Alternativelly, you can simply copy the whole content of the Windows install as base dir, add the `SE1_10.gro` from the repo in the root folder of the install, and then copy the binary built in `Bin` folder
 
 #### Building (only for SS:TSE)
 
@@ -59,19 +64,20 @@ Type this in your terminal:
 ```
 Sources/build-linux64.sh            # use build-linux32.sh for 32-bits
 cp Sources/cmake-build/ssam Bin/
-cp Sources/cmake-build/Debug/* Bin/Debug/
+cp Sources/cmake-build/Debug/* Bin/
 ```
 
 #### Building (only for SS:TFE)
 
-Same as SS:SE, but note the following:
+Type this in your terminal:
 
-- Before running build-linux64.sh, modify the file by passing `-DTFE=TRUE` to cmake.
-- After building, you need to copy 'ssam**-tfe**' instead of 'ssam', as shown:
+```
+Sources/build-linux64.sh -DTFE=TRUE	# use build-linux32.sh for 32-bits
+cp Sources/cmake-build/ssam-tfe Bin/
+cp Sources/cmake-build/Debug/* Bin/
+```
 
-  ```
-  cp Sources/cmake-build/ssam-tfe Bin/
-  ```
+Note that the CD version of SS:TSE used MP3 for music. You will need to build / get `libamp11lib.so` and copy it inside `Bin` with the other libs to have music. Steam version is ogg and don't need this library.
 
 #### Running
 

@@ -262,7 +262,7 @@ void CRenderer::SetupFogAndHaze(void)
       // if viewer is not in haze
       if( !re_bViewerInHaze) {
         // if viewer is in this sector
-        if( bsc.bsc_bspBSPTree.TestSphere(re_vdViewSphere, 0.01)>=0) {
+        if( bsc.bsc_bspBSPTree.TestSphere(re_vdViewSphere, 0.01f)>=0) {
           // mark that viewer is in haze
           re_bViewerInHaze = TRUE;
         }

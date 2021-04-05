@@ -117,7 +117,7 @@ struct ENGINE_API MeshSurface
 
 struct ENGINE_API MeshTriangle
 {
-  INDEX iVertex[3];  
+  INDEX_T iVertex[3];  
 };
 
 static inline CTStream &operator>>(CTStream &strm, MeshTriangle &mt)

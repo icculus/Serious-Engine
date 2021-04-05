@@ -195,3 +195,8 @@ void STAT_Report(CTString &strReport)
 {
   _sfStats.Report(strReport);
 }
+
+void STAT_Enable(BOOL enable)
+{
+  _sfStats.sf_enabled = enable;
+}

@@ -125,7 +125,8 @@ public:
 // increment a byte without overflowing it
 static inline void IncrementByteWithClip( UBYTE &ub, SLONG slAdd)
 {
-  ub = pubClipByte[(SLONG)ub+slAdd];
+  SLONG t = (SLONG)ub+slAdd;
+  ub = (t<0)?0:pubClipByte[t];
 }
 
 #if 0 // DG: unused.
@@ -867,7 +868,7 @@ skipPixel:
         sl1oL = auw1oSqrt[sl1oL];
         SLONG slIntensity = _slLightMax;
         if( sl1oL<256) slIntensity = 0;
-        else if( sl1oL<slMax1oL) slIntensity = ((sl1oL-256)*_slLightStep)/*>>16*/;
+        else if( sl1oL<slMax1oL) slIntensity = (((sl1oL-256)*_slLightStep));
         // add the intensity to the pixel
         AddToCluster( pubLayer, slIntensity);
       } 
@@ -1083,7 +1084,7 @@ skipPixel:
         sl1oL = auw1oSqrt[sl1oL];
         SLONG slIntensity = _slLightMax;
         if( sl1oL<256) slIntensity = 0;
-        else if( sl1oL<slMax1oL) slIntensity = ((sl1oL-256)*_slLightStep)/*>>16*/;
+        else if( sl1oL<slMax1oL) slIntensity = ((sl1oL-256)*(_slLightStep));
         // add the intensity to the pixel
         AddToCluster( pubLayer, slIntensity);
       } 
@@ -1807,14 +1808,14 @@ void CLayerMixer::MixOneMipmap(CBrushShadowMap *pbsm, INDEX iMipmap)
   );
 
 #else
-  register ULONG count = this->lm_pixCanvasSizeU * this->lm_pixCanvasSizeV;
+  ULONG count = this->lm_pixCanvasSizeU * this->lm_pixCanvasSizeV;
   #if PLATFORM_LITTLEENDIAN
   // Forces C fallback; BYTESWAP itself is a no-op on little endian.
-  register ULONG swapped = BYTESWAP32_unsigned(colAmbient);
+  ULONG swapped = BYTESWAP32_unsigned(colAmbient);
   #else
   STUBBED("actually need byteswap?");
   // (uses inline asm on MacOS PowerPC)
-  register ULONG swapped = colAmbient;
+  ULONG swapped = colAmbient;
   BYTESWAP(swapped);
   #endif
 

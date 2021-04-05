@@ -33,8 +33,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 extern CStaticStackArray<GFXVertex>   _avtxCommon;
 extern CStaticStackArray<GFXTexCoord> _atexCommon;
 extern CStaticStackArray<GFXColor>    _acolCommon;
-extern CStaticStackArray<INDEX>       _aiCommonElements;
-extern CStaticStackArray<INDEX>       _aiCommonQuads;
+extern CStaticStackArray<INDEX_T>     _aiCommonElements;
+extern CStaticStackArray<INDEX_T>     _aiCommonQuads;
 
 #include <Engine/Graphics/OpenGL.h>
 #include <Engine/Graphics/Gfx_wrapper.h>

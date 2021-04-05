@@ -24,8 +24,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // set this to 1 to enable checks whether somethig is deleted while iterating some array/container
 #define CHECKARRAYLOCKING 0
 
-
-
 #include <Engine/Base/SystemSpecificInclude.h>
 
 #include <Engine/Base/Types.h>

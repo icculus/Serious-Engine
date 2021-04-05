@@ -150,10 +150,10 @@ void CBrushArchive::LinkPortalsAndSectors(void)
                 }
                 // create a BSP polygon from the brush polygon
                 CBrushPolygon        &brpo2 = *itbpo2;
-                BSPPolygon<DOUBLE, 3> bspo2;
+                BSPPolygon<FLOAT, 3> bspo2;
                 brpo2.CreateBSPPolygonNonPrecise(bspo2);
                 // split the polygon with the BSP of the sector
-                DOUBLEbspcutter3D bcCutter(bspo2, *itbsc1->bsc_bspBSPTree.bt_pbnRoot);
+                FLOATbspcutter3D bcCutter(bspo2, *itbsc1->bsc_bspBSPTree.bt_pbnRoot);
                 // if anything remains on the border looking outside
                 if (bcCutter.bc_abedInside.Count()>0
                   ||bcCutter.bc_abedBorderInside.Count()>0

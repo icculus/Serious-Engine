@@ -7,6 +7,8 @@ project(SeriousEngine)
 # Use system SDL2 is on by default
 option(USE_SYSTEM_SDL2 "Use systems sdl2 development files" On)
 option(USE_SYSTEM_ZLIB "Use systems zlib development files" On)
+option(USE_CCACHE "Set to ON to use ccache if present in the system" ${USE_CCACHE})
+
 
 # fallback for cmake versions without add_compile_options # RAKE! Borrowed from dhewm3 project
 if(NOT COMMAND add_compile_options)
@@ -23,6 +25,15 @@ include(CheckCXXCompilerFlag)
 
 # ssam expects the libs to be in Debug/
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/Debug)
+
+if(USE_CCACHE)
+    find_program(CCACHE_FOUND ccache)
+    if(CCACHE_FOUND)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+    endif()
+endif()
+
 
 # Use systemwide SDL2 or custom build
 # RAKE!: Find a way to use their custom built library if
@@ -90,24 +101,61 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 	add_compile_options(-Wall)
 	add_compile_options(-pipe)
 	add_compile_options(-fPIC)
-	add_compile_options(-march=native)
+	if(NOT PANDORA AND NOT PYRA AND NOT (MACOSX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64"))
+		add_compile_options(-march=native)
+	endif()
+	if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm.*")
+		if(PYRA)
+		    add_compile_options(-mfpu=neon-vfpv4)
+		elseif(NOT (MACOSX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64"))
+		    add_compile_options(-mfpu=neon)
+		endif()
+	endif()
         add_compile_options(-fno-strict-aliasing)
 	add_definitions(-D_REENTRANT=1)
 	add_definitions(-D_MT=1)
 
-        ## Add your custom C and CXX flags on the command line aka -DCMAKE_C_FLAGS=-std=c98 or -DCMAKE_CXX_FLAGS=-std=c++11
+	## Add your custom C and CXX flags on the command line aka -DCMAKE_C_FLAGS=-std=c98 or -DCMAKE_CXX_FLAGS=-std=c++11
 
 	## For C flags
         set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -g -D_DEBUG=1 -DDEBUG=1 -O0")
-        set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -O3 -fno-unsafe-math-optimizations")
-        set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -fno-unsafe-math-optimizations")
-        set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -Os -fno-unsafe-math-optimizations")
+        if(PANDORA)
+            set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -faligned-new -ffast-math")
+            set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3  -faligned-new -ffast-math")
+            set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -Os -ffast-math")
+        elseif(PYRA)
+            set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -marm -faligned-new -ffast-math")
+            set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -marm -faligned-new -ffast-math")
+            set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -Os -marm -ffast-math")
+        elseif(MACOSX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+            set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O0 -fno-unsafe-math-optimizations")
+            set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O0 -fno-unsafe-math-optimizations")
+            set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -O0 -fno-unsafe-math-optimizations")
+        else()
+            set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -fno-unsafe-math-optimizations")
+            set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -fno-unsafe-math-optimizations")
+            set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -Os -fno-unsafe-math-optimizations")
+        endif()
 
 	## For C++ flags
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -D_DEBUG=1 -DDEBUG=1 -O0")
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -O3 -fno-unsafe-math-optimizations")
-        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -fno-unsafe-math-optimizations") ## RAKE! Does -DNDEBUG=1 and -D_NDEBUG=1 mess with RelWithDebInfo?
-        set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -Os -fno-unsafe-math-optimizations")
+        if(PANDORA)
+            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -O3  -faligned-new -ffast-math")
+            set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3  -faligned-new -ffast-math")
+            set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -Os -ffast-math")
+        elseif(PYRA)
+            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -O3 -marm -faligned-new -ffast-math")
+            set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -marm -faligned-new -ffast-math")
+            set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -Os -marm -ffast-math")
+        elseif(MACOSX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -O0 -fno-unsafe-math-optimizations")
+            set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O0 -fno-unsafe-math-optimizations") ## RAKE! Does -DNDEBUG=1 and -D_NDEBUG=1 mess with RelWithDebInfo?
+            set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -O0 -fno-unsafe-math-optimizations")
+        else()
+            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -O3 -fno-unsafe-math-optimizations")
+            set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -g -O3 -fno-unsafe-math-optimizations") ## RAKE! Does -DNDEBUG=1 and -D_NDEBUG=1 mess with RelWithDebInfo?
+            set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -DNDEBUG=1 -D_NDEBUG=1 -Os -fno-unsafe-math-optimizations")
+        endif()
 
 	# TODO fix these warnings
 	add_compile_options(-Wno-switch)
@@ -118,7 +166,7 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 	add_compile_options(-Wno-missing-braces)
 	add_compile_options(-Wno-overloaded-virtual)
 	add_compile_options(-Wno-invalid-offsetof)
-	MESSAGE(WARNING, "re-enable some of the warnings some day!")
+	#MESSAGE(WARNING, "re-enable some of the warnings some day!")
 
 	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
 		# !!! FIXME: turn a bunch of these off, this is just for now. I hope.  --ryan.
@@ -216,6 +264,11 @@ endif()
 option(PANDORA "Compile for Pandora" FALSE)
 if (PANDORA)
     add_definitions(-DPLATFORM_PANDORA=1)
+endif()
+
+option(PYRA "Compile for Pyra" FALSE)
+if (PYRA)
+    add_definitions(-DPLATFORM_PYRA=1)
 endif()
 
 option(USE_TREMOR "Use Tremor instead of Vorbis" FALSE)
@@ -702,6 +755,33 @@ if(NOT USE_SYSTEM_ZLIB)
         Engine/zlib/uncompr.c)
 endif()
 
+set(ENGINE_SAFEMATH_SRCS
+    Engine/Brushes/Brush.cpp
+    Engine/Brushes/BrushPolygon.cpp
+    Engine/Brushes/BrushSector.cpp
+    Engine/Entities/Entity.cpp
+    Engine/Entities/EntityClass.cpp
+    Engine/Entities/EntityCollision.cpp
+    Engine/Entities/PlayerCharacter.cpp
+    Engine/Terrain/TerrainMisc.cpp
+    Engine/Terrain/TerrainRayCasting.cpp
+    Engine/World/WorldCSG.cpp
+    Engine/World/WorldRayCasting.cpp
+    Engine/World/WorldCollision.cpp
+    Engine/World/WorldCollisionGrid.cpp
+
+    Engine/Math/Projection_Simple_DOUBLE.cpp
+    Engine/Math/Geometry_DOUBLE.cpp
+)
+add_library(engine_safemath STATIC
+    ${ENGINE_SAFEMATH_SRCS}
+)
+target_compile_options(engine_safemath PRIVATE "-fno-unsafe-math-optimizations")
+if(PANDORA)
+    target_compile_options(engine_safemath PRIVATE "-mfpu=vfpv3")
+endif()
+add_dependencies(engine_safemath ParseEntities)
+
 set(ENGINE_SRCS
     ${ENGINE_ENTITIES_CPP}
     Engine/Engine.cpp
@@ -741,23 +821,16 @@ set(ENGINE_SRCS
     Engine/Base/SDL/SDLInput.cpp
     Engine/Base/SDL/SDLEvents.cpp
     ${SYNCHRO_SRCS}
-    Engine/Brushes/Brush.cpp
     Engine/Brushes/BrushIO.cpp
     Engine/Brushes/BrushShadows.cpp
     Engine/Brushes/BrushTriangularize.cpp
     Engine/Brushes/BrushArchive.cpp
     Engine/Brushes/BrushImport.cpp
     Engine/Brushes/BrushMip.cpp
-    Engine/Brushes/BrushPolygon.cpp
     Engine/Brushes/BrushExport.cpp
-    Engine/Brushes/BrushSector.cpp
-    Engine/Entities/Entity.cpp
     Engine/Entities/NearestPolygon.cpp
     Engine/Entities/EntityProperties.cpp
-    Engine/Entities/PlayerCharacter.cpp
-    Engine/Entities/EntityClass.cpp
     Engine/Entities/FieldBSPTesting.cpp
-    Engine/Entities/EntityCollision.cpp
     Engine/Entities/EntityCopying.cpp
     Engine/Entities/LastPositions.cpp
     Engine/Math/Projection_Isometric.cpp
@@ -767,14 +840,12 @@ set(ENGINE_SRCS
     Engine/Math/Float.cpp
     Engine/Math/Object3D_CSG.cpp
     Engine/Math/Projection_Simple.cpp
-    Engine/Math/Projection_Simple_DOUBLE.cpp
     Engine/Math/Functions.cpp
     Engine/Math/ObjectSector.cpp
     Engine/Math/Placement.cpp
     Engine/Math/TextureMapping.cpp
     Engine/Math/Geometry.cpp
     Engine/Math/Projection.cpp
-    Engine/Math/Geometry_DOUBLE.cpp
     #Engine/Math/Object3D_IO.cpp  # Exploration 3D support.
     #Engine/Models/EditModel.cpp
     Engine/Models/Model.cpp
@@ -837,8 +908,6 @@ set(ENGINE_SRCS
     Engine/Terrain/TerrainArchive.cpp
     Engine/Terrain/TerrainEditing.cpp
     Engine/Terrain/TerrainLayer.cpp
-    Engine/Terrain/TerrainMisc.cpp
-    Engine/Terrain/TerrainRayCasting.cpp
     Engine/Terrain/TerrainRender.cpp
     Engine/Terrain/TerrainTile.cpp
     Engine/Rendering/Render.cpp
@@ -873,14 +942,10 @@ set(ENGINE_SRCS
     Engine/Templates/NameTable_CTFileName.cpp
     Engine/Templates/NameTable_CTranslationPair.cpp
     Engine/Templates/BSP.cpp
-    Engine/World/WorldCSG.cpp
     Engine/World/PhysicsProfile.cpp
-    Engine/World/WorldCollision.cpp
-    Engine/World/WorldIO.cpp
-    Engine/World/WorldRayCasting.cpp
     Engine/World/World.cpp
-    Engine/World/WorldCollisionGrid.cpp
     Engine/World/WorldEditingProfile.cpp
+    Engine/World/WorldIO.cpp
     ${ADDITIONAL_ENGINE_SRCS}
     ${ZLIB_SRCS}
 )
@@ -900,9 +965,11 @@ add_executable(ssam
     SeriousSam/MenuGadgets.cpp
     SeriousSam/MenuPrinting.cpp
 )
+target_link_libraries(ssam engine_safemath)
 add_dependencies(ssam ParseEntities)
 # Make symbols in the main executable available to dynamic objects
 set_target_properties(ssam PROPERTIES ENABLE_EXPORTS ON)
+
 
 # !!! FIXME: this is an option because you have to recompile the entire engine twice.
 # !!! FIXME:  If we can put the engine in a static library and not lose symbols,
@@ -910,6 +977,7 @@ set_target_properties(ssam PROPERTIES ENABLE_EXPORTS ON)
 option(BUILD_DEDICATED_SERVER "Compile the dedicated server, too" FALSE)
 if(BUILD_DEDICATED_SERVER)
     add_executable(SeriousSamDedicated ${ENGINE_SRCS} DedicatedServer/DedicatedServer.cpp)
+    target_link_libraries(SeriousSamDedicated engine_safemath)
     add_dependencies(SeriousSamDedicated ParseEntities)
     # Make symbols in the main executable available to dynamic objects
     set_target_properties(SeriousSamDedicated PROPERTIES ENABLE_EXPORTS ON)

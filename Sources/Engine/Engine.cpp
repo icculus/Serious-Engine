@@ -128,13 +128,6 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 static void DetectCPU(void)
 {
   char strVendor[12+1] = { 0 };
-#if (defined USE_PORTABLE_C)  // rcg10072001
-  CPrintF(TRANSV("  (No CPU detection in this binary.)\n"));
-  #ifdef PLATFORM_PANDORA
-  sys_iCPUMHz = 400;    // conservative, ARM -> x86 cpu translation is not 1 to 1.
-  #endif
-
-#else
   strVendor[12] = 0;
   ULONG ulTFMS = 0;
   ULONG ulFeatures = 0;
@@ -221,8 +214,13 @@ static void DetectCPU(void)
   sys_iCPUStepping = iStepping;
   sys_bCPUHasMMX = bMMX!=0;
   sys_bCPUHasCMOV = bCMOV!=0;
+#ifdef PLATFORM_PANDORA
+  sys_iCPUMHz = 400;    // conservative, ARM -> x86 cpu translation is not 1 to 1.
+#elif defined(PLATFORM_PYRA)
+  sys_iCPUMHz = 1000;
+#else
   sys_iCPUMHz = INDEX(_pTimer->tm_llCPUSpeedHZ/1E6);
-
+#endif
   if( !bMMX) FatalError( TRANS("MMX support required but not present!"));
 }
 
@@ -784,20 +782,20 @@ ENGINE_API void SE_EndEngine(void)
 
   // shutdown profilers
   _sfStats.Clear();
-  _pfGfxProfile           .pf_apcCounters.Clear();
-  _pfGfxProfile           .pf_aptTimers  .Clear();
-  _pfModelProfile         .pf_apcCounters.Clear();
-  _pfModelProfile         .pf_aptTimers  .Clear();
-  _pfSoundProfile         .pf_apcCounters.Clear();
-  _pfSoundProfile         .pf_aptTimers  .Clear();
-  _pfNetworkProfile       .pf_apcCounters.Clear();
-  _pfNetworkProfile       .pf_aptTimers  .Clear();
-  _pfRenderProfile        .pf_apcCounters.Clear();
-  _pfRenderProfile        .pf_aptTimers  .Clear();
-  _pfWorldEditingProfile  .pf_apcCounters.Clear();
-  _pfWorldEditingProfile  .pf_aptTimers  .Clear();
-  _pfPhysicsProfile       .pf_apcCounters.Clear();
-  _pfPhysicsProfile       .pf_aptTimers  .Clear();
+  _pfGfxProfile           .CountersClear();
+  _pfGfxProfile           .TimersClear();
+  _pfModelProfile         .CountersClear();
+  _pfModelProfile         .TimersClear();
+  _pfSoundProfile         .CountersClear();
+  _pfSoundProfile         .TimersClear();
+  _pfNetworkProfile       .CountersClear();
+  _pfNetworkProfile       .TimersClear();
+  _pfRenderProfile        .CountersClear();
+  _pfRenderProfile        .TimersClear();
+  _pfWorldEditingProfile  .CountersClear();
+  _pfWorldEditingProfile  .TimersClear();
+  _pfPhysicsProfile       .CountersClear();
+  _pfPhysicsProfile       .TimersClear();
 
   // remove default fonts if needed
   if( _pfdDisplayFont != NULL) { delete _pfdDisplayFont;  _pfdDisplayFont=NULL; }

@@ -45,7 +45,7 @@ static GFXTexCoord *_paHazeUVMap = NULL;   // UVMap for haze pass
 static GFXColor    *_pacolVtxHaze = NULL;  // array of vertex colors for haze
 
 static CTextureObject **_paTextures = NULL;// array of textures to chose from
-static INDEX       *_paIndices   = NULL;   // current array of triangle indices
+static INDEX_T       *_paIndices   = NULL;   // current array of triangle indices
 
 static GFXColor    _colAmbient = 0x000000FF;     // Ambient color
 static COLOR       _colModel   = 0x000000FF;     // Model color
@@ -352,7 +352,7 @@ void shaSetNormalArray(GFXNormal *paNormals)
 }
 
 // Set array of indices
-void shaSetIndices(INDEX *paIndices,INDEX ctIndices)
+void shaSetIndices(INDEX_T *paIndices,INDEX ctIndices)
 {
   ASSERT(paIndices!=NULL);
   ASSERT(ctIndices>0);
@@ -576,7 +576,7 @@ GFXVertex4 *shaGetVertexArray(void)
 }
 
 // Get index array
-INDEX *shaGetIndexArray(void)
+INDEX_T *shaGetIndexArray(void)
 {
   return _paIndices;
 }

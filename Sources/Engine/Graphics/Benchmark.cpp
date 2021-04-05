@@ -48,7 +48,7 @@ static CTexParams _tpLocal;
 static CStaticStackArray<GFXVertex>   _avtx;
 static CStaticStackArray<GFXTexCoord> _atex;
 static CStaticStackArray<GFXColor>    _acol;
-static CStaticStackArray<INDEX> _aiElements;
+static CStaticStackArray<INDEX_T> _aiElements;
 
 
 
@@ -88,7 +88,7 @@ static DOUBLE FillRatePass(INDEX ct)
   avtx[3].x = _pixSizeI;  avtx[3].y = 0;          avtx[3].z = 0.5f;  
   GFXTexCoord atex[4] = { {0,0}, {0,1}, {1,1}, {1,0} };
   GFXColor    acol[4] = { 0xFF0000FF, 0xFF00FF00, 0xFFFF0000, 0xFFFF00FF };
-  INDEX       aidx[6] = { 0,1,2, 0,2,3};
+  INDEX_T     aidx[6] = { 0,1,2, 0,2,3};
   gfxSetVertexArray( &avtx[0], 4);
   gfxSetTexCoordArray( &atex[0], FALSE);
   gfxSetColorArray( &acol[0]);

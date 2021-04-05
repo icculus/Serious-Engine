@@ -67,7 +67,7 @@ struct ENGINE_API ModelMipInfo
   CStaticArray<FLOAT3D> mmpi_avBumpV;   // bump directions for each surface vertex
   ULONG mmpi_ulLayerFlags;              // all texture layers needed in this mip
   INDEX mmpi_ctTriangles;               // total triangles in this mip
-  CStaticStackArray<INDEX> mmpi_aiElements;
+  CStaticStackArray<INDEX_T> mmpi_aiElements;
 
 	void Clear();								 // clears this mip model's arays and their sub-arrays, dealocates memory
 	void Read_t( CTStream *istrFile, BOOL bReadPolygonalPatches, BOOL bReadPolygonsPerSurface,

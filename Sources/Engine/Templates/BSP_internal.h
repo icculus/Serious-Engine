@@ -21,6 +21,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern FLOAT mth_fCSGEpsilon;
 
+#ifdef __arm__
+#define SPHERE_HACK
+#endif
+
 /*
  * Type used to identify BSP-node locations
  */
@@ -169,6 +173,9 @@ public:
 
   /* Test if a sphere is inside, outside, or intersecting. (Just a trivial rejection test) */
   FLOAT TestSphere(const Vector<Type, iDimensions> &vSphereCenter, Type tSphereRadius) const;
+  #ifdef SPHERE_HACK
+  int   TestSphere_hack(const FLOAT *params) const;
+  #endif
   /* Test if a box is inside, outside, or intersecting. (Just a trivial rejection test) */
   FLOAT TestBox(const OBBox<Type> &box) const;
 };

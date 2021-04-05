@@ -1567,7 +1567,7 @@ void CDrawPort::AddTexture( const FLOAT fI0, const FLOAT fJ0, const FLOAT fI1, c
   GFXVertex   *pvtx = _avtxCommon.Push(4);
   GFXTexCoord *ptex = _atexCommon.Push(4);
   GFXColor    *pcol = _acolCommon.Push(4);
-  INDEX       *pelm = _aiCommonElements.Push(6);
+  INDEX_T     *pelm = _aiCommonElements.Push(6);
   pvtx[0].x = fI0;  pvtx[0].y = fJ0;  pvtx[0].z = 0;
   pvtx[1].x = fI0;  pvtx[1].y = fJ1;  pvtx[1].z = 0;
   pvtx[2].x = fI1;  pvtx[2].y = fJ1;  pvtx[2].z = 0;
@@ -1591,7 +1591,7 @@ void CDrawPort::AddTexture( const FLOAT fI0, const FLOAT fJ0, const FLOAT fI1, c
   GFXVertex   *pvtx = _avtxCommon.Push(4);
   GFXTexCoord *ptex = _atexCommon.Push(4);
   GFXColor    *pcol = _acolCommon.Push(4);
-  INDEX       *pelm = _aiCommonElements.Push(6);
+  INDEX_T     *pelm = _aiCommonElements.Push(6);
   pvtx[0].x = fI0;  pvtx[0].y = fJ0;  pvtx[0].z = 0;
   pvtx[1].x = fI0;  pvtx[1].y = fJ1;  pvtx[1].z = 0;
   pvtx[2].x = fI1;  pvtx[2].y = fJ1;  pvtx[2].z = 0;
@@ -1619,7 +1619,7 @@ void CDrawPort::AddTriangle( const FLOAT fI0, const FLOAT fJ0,
   GFXVertex   *pvtx = _avtxCommon.Push(3);
   /* GFXTexCoord *ptex = */ _atexCommon.Push(3);
   GFXColor    *pcol = _acolCommon.Push(3);
-  INDEX       *pelm = _aiCommonElements.Push(3);
+  INDEX_T     *pelm = _aiCommonElements.Push(3);
   pvtx[0].x = fI0;  pvtx[0].y = fJ0;  pvtx[0].z = 0;
   pvtx[1].x = fI1;  pvtx[1].y = fJ1;  pvtx[1].z = 0;
   pvtx[2].x = fI2;  pvtx[2].y = fJ2;  pvtx[2].z = 0;
@@ -1646,7 +1646,7 @@ void CDrawPort::AddTexture( const FLOAT fI0, const FLOAT fJ0, const FLOAT fU0, c
   GFXVertex   *pvtx = _avtxCommon.Push(4);
   GFXTexCoord *ptex = _atexCommon.Push(4);
   GFXColor    *pcol = _acolCommon.Push(4);
-  INDEX       *pelm = _aiCommonElements.Push(6);
+  INDEX_T     *pelm = _aiCommonElements.Push(6);
   pvtx[0].x = fI0;  pvtx[0].y = fJ0;  pvtx[0].z = 0;
   pvtx[1].x = fI1;  pvtx[1].y = fJ1;  pvtx[1].z = 0;
   pvtx[2].x = fI2;  pvtx[2].y = fJ2;  pvtx[2].z = 0;

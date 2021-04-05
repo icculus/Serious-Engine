@@ -100,6 +100,34 @@ void CBrushPolygon::CreateBSPPolygon(BSPPolygon<DOUBLE, 3> &bspo)
   }}
   bspo.bpo_abedPolygonEdges.Unlock();
 }
+
+void CBrushPolygon::CreateBSPPolygon(BSPPolygon<FLOAT, 3> &bspo)
+{
+  ASSERT(GetFPUPrecision()==FPT_53BIT);
+  CBrushPolygon &brpo = *this;
+
+  // set the plane of the bsp polygon
+  ((FLOATplane3D &)bspo) = DOUBLEtoFLOAT(*brpo.bpo_pbplPlane->bpl_ppldPreciseAbsolute);
+  bspo.bpo_ulPlaneTag = (size_t)brpo.bpo_pbscSector->bsc_abplPlanes.Index(brpo.bpo_pbplPlane);
+
+  // create the array of edges in the bsp polygon
+  INDEX ctEdges = brpo.bpo_abpePolygonEdges.Count();
+  bspo.bpo_abedPolygonEdges.New(ctEdges);
+
+  // for all edges in the polygon
+  bspo.bpo_abedPolygonEdges.Lock();
+  {for(INDEX iEdge=0; iEdge<ctEdges; iEdge++){
+    CBrushPolygonEdge &brped = brpo.bpo_abpePolygonEdges[iEdge];
+    BSPEdge<FLOAT, 3>  &bed = bspo.bpo_abedPolygonEdges[iEdge];
+    // create the bsp edge in the bsp polygon
+    Vector<DOUBLE, 3> v0, v1;
+    brped.GetVertexCoordinatesPreciseAbsolute(v0, v1);
+    bed.bed_vVertex0 = DOUBLEtoFLOAT(v0);
+    bed.bed_vVertex1 = DOUBLEtoFLOAT(v1);
+  }}
+  bspo.bpo_abedPolygonEdges.Unlock();
+}
+
 void CBrushPolygon::CreateBSPPolygonNonPrecise(BSPPolygon<DOUBLE, 3> &bspo)
 {
   CBrushPolygon &brpo = *this;
@@ -129,6 +157,39 @@ void CBrushPolygon::CreateBSPPolygonNonPrecise(BSPPolygon<DOUBLE, 3> &bspo)
     brped.GetVertexCoordinatesAbsolute(v0, v1);
     bed.bed_vVertex0 = FLOATtoDOUBLE(v0)+vOffset;
     bed.bed_vVertex1 = FLOATtoDOUBLE(v1)+vOffset;
+  }}
+  bspo.bpo_abedPolygonEdges.Unlock();
+}
+
+void CBrushPolygon::CreateBSPPolygonNonPrecise(BSPPolygon<FLOAT, 3> &bspo)
+{
+  CBrushPolygon &brpo = *this;
+
+  // offset for epsilon testing
+  const FLOAT fOffset = -0.01f;
+
+  // set the plane of the bsp polygon
+  ((FLOATplane3D &)bspo) = brpo.bpo_pbplPlane->bpl_plAbsolute;
+  bspo.bpo_ulPlaneTag = (size_t)brpo.bpo_pbscSector->bsc_abplPlanes.Index(brpo.bpo_pbplPlane);
+  // calculate offset for points
+  FLOAT3D vOffset = ((FLOAT3D&)brpo.bpo_pbplPlane->bpl_plAbsolute)*-fOffset;
+  // offset the plane
+  bspo.Offset(fOffset);
+
+  // create the array of edges in the bsp polygon
+  INDEX ctEdges = brpo.bpo_abpePolygonEdges.Count();
+  bspo.bpo_abedPolygonEdges.New(ctEdges);
+
+  // for all edges in the polygon
+  bspo.bpo_abedPolygonEdges.Lock();
+  {for(INDEX iEdge=0; iEdge<ctEdges; iEdge++){
+    CBrushPolygonEdge &brped = brpo.bpo_abpePolygonEdges[iEdge];
+    BSPEdge<FLOAT, 3>  &bed = bspo.bpo_abedPolygonEdges[iEdge];
+    // create the offseted bsp edge in the bsp polygon
+    FLOAT3D v0, v1;
+    brped.GetVertexCoordinatesAbsolute(v0, v1);
+    bed.bed_vVertex0 = v0+vOffset;
+    bed.bed_vVertex1 = v1+vOffset;
   }}
   bspo.bpo_abedPolygonEdges.Unlock();
 }

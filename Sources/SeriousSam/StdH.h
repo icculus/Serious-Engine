@@ -34,11 +34,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define DECL_DLL 
 #endif
 
+#ifdef FIRST_ENCOUNTER
+#include <Entities/Global.h>
+#include <Entities/Common/Common.h>
+#include <Entities/Common/GameInterface.h>
+#include <Entities/WorldLink.h>
+#include <Entities/Player.h>
+#else
 #include <EntitiesMP/Global.h>
 #include <EntitiesMP/Common/Common.h>
 #include <EntitiesMP/Common/GameInterface.h>
 #include <EntitiesMP/WorldLink.h>
 #include <EntitiesMP/Player.h>
+#endif
 #undef DECL_DLL
 
 #include "SeriousSam.h"

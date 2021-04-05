@@ -150,7 +150,7 @@ void ShowSelectionInternal(CTerrain *ptrTerrain, Rect &rcExtract, CTextureData *
   bboxSelection.maxvect(2) = bboxAllTerrain.maxvect(2);
 
   GFXVertex *pavVertices;
-  INDEX     *paiIndices;
+  INDEX_T   *paiIndices;
   INDEX      ctVertices;
   INDEX      ctIndices;
   

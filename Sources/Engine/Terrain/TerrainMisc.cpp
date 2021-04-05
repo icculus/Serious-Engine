@@ -36,7 +36,7 @@ extern CTerrain *_ptrTerrain; // Current terrain
 static FLOAT3D _vHitLocation = FLOAT3D(-100,-100,-100);
 
 CStaticStackArray<GFXVertex4> _avExtVertices;
-CStaticStackArray<INDEX>      _aiExtIndices;
+CStaticStackArray<INDEX_T>    _aiExtIndices;
 CStaticStackArray<GFXColor>   _aiExtColors;
 CStaticStackArray<INDEX>      _aiHitTiles;
 
@@ -210,7 +210,7 @@ FLOAT GetExactHitLocation(INDEX iTileIndex, FLOAT3D &vOrigin, FLOAT3D &vTarget, 
   QuadTreeNode &qtn = _ptrTerrain->tr_aqtnQuadTreeNodes[iTileIndex];
 
   GFXVertex *pavVertices;
-  INDEX     *paiIndices;
+  INDEX_T   *paiIndices;
   INDEX      ctVertices;
   INDEX      ctIndices;
 
@@ -222,7 +222,7 @@ FLOAT GetExactHitLocation(INDEX iTileIndex, FLOAT3D &vOrigin, FLOAT3D &vTarget, 
 
   // for each triangle
   for(INDEX iTri=0;iTri<ctIndices;iTri+=3) {
-    INDEX *pind = &paiIndices[iTri];
+    INDEX_T *pind = &paiIndices[iTri];
     GFXVertex &v0 = pavVertices[pind[0]];
     GFXVertex &v1 = pavVertices[pind[1]];
     GFXVertex &v2 = pavVertices[pind[2]];
@@ -291,7 +291,7 @@ FLOAT3D _vHitExact; // TEMP
 #pragma message(">> Remove Rect from ExtractPolygonsInBox")
 // Extract polygons in given box and returns clipped rectangle
 Rect ExtractPolygonsInBox(CTerrain *ptrTerrain, const FLOATaabbox3D &bboxExtract, GFXVertex4 **pavVtx, 
-                          INDEX **paiInd, INDEX &ctVtx,INDEX &ctInd,BOOL bFixSize/*=FALSE*/)
+                          INDEX_T **paiInd, INDEX &ctVtx,INDEX &ctInd,BOOL bFixSize/*=FALSE*/)
 {
   ASSERT(ptrTerrain!=NULL);
 
@@ -310,10 +310,15 @@ Rect ExtractPolygonsInBox(CTerrain *ptrTerrain, const FLOATaabbox3D &bboxExtract
   if(!bFixSize) {
     // max vector of bbox in incremented for one, because first vertex is at 0,0,0 in world and in heightmap is at 1,1
 #ifdef __arm__
-    rc.rc_iLeft   = (isinf(bbox.minvect(1)))?(INDEX)0:Clamp((INDEX)(bbox.minvect(1)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
-    rc.rc_iTop    = (isinf(bbox.minvect(3)))?(INDEX)0:Clamp((INDEX)(bbox.minvect(3)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
-    rc.rc_iRight  = (isinf(bbox.maxvect(1)))?(INDEX)0:Clamp((INDEX)ceil(bbox.maxvect(1)+1),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
-    rc.rc_iBottom = (isinf(bbox.maxvect(3)))?(INDEX)0:Clamp((INDEX)ceil(bbox.maxvect(3)+1),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
+#ifdef PLATFORM_PANDORA
+  #define Isinf(a) (((*(unsigned int*)&a)&0x7fffffff)==0x7f800000)
+#else
+  #define Isinf isinff
+#endif
+    rc.rc_iLeft   = (Isinf(bbox.minvect(1)))?(INDEX)0:Clamp((INDEX)(bbox.minvect(1)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
+    rc.rc_iTop    = (Isinf(bbox.minvect(3)))?(INDEX)0:Clamp((INDEX)(bbox.minvect(3)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
+    rc.rc_iRight  = (Isinf(bbox.maxvect(1)))?(INDEX)0:Clamp((INDEX)ceil(bbox.maxvect(1)+1),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
+    rc.rc_iBottom = (Isinf(bbox.maxvect(3)))?(INDEX)0:Clamp((INDEX)ceil(bbox.maxvect(3)+1),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
 #else
     rc.rc_iLeft   = Clamp((INDEX)(bbox.minvect(1)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
     rc.rc_iTop    = Clamp((INDEX)(bbox.minvect(3)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
@@ -323,10 +328,10 @@ Rect ExtractPolygonsInBox(CTerrain *ptrTerrain, const FLOATaabbox3D &bboxExtract
   } else {
     // max vector of bbox in incremented for one, because first vertex is at 0,0,0 in world and in heightmap is at 1,1
 #ifdef __arm__
-    rc.rc_iLeft   = (isinf(bbox.minvect(1)))?(INDEX)0:Clamp((INDEX)(bbox.minvect(1)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
-    rc.rc_iTop    = (isinf(bbox.minvect(3)))?(INDEX)0:Clamp((INDEX)(bbox.minvect(3)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
-    rc.rc_iRight  = (isinf(bbox.maxvect(1)))?(INDEX)0:Clamp((INDEX)(bbox.maxvect(1)+0),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
-    rc.rc_iBottom = (isinf(bbox.maxvect(3)))?(INDEX)0:Clamp((INDEX)(bbox.maxvect(3)+0),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
+    rc.rc_iLeft   = (Isinf(bbox.minvect(1)))?(INDEX)0:Clamp((INDEX)(bbox.minvect(1)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
+    rc.rc_iTop    = (Isinf(bbox.minvect(3)))?(INDEX)0:Clamp((INDEX)(bbox.minvect(3)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
+    rc.rc_iRight  = (Isinf(bbox.maxvect(1)))?(INDEX)0:Clamp((INDEX)(bbox.maxvect(1)+0),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
+    rc.rc_iBottom = (Isinf(bbox.maxvect(3)))?(INDEX)0:Clamp((INDEX)(bbox.maxvect(3)+0),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
 #else
     rc.rc_iLeft   = Clamp((INDEX)(bbox.minvect(1)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapWidth);
     rc.rc_iTop    = Clamp((INDEX)(bbox.minvect(3)-0),(INDEX)0,ptrTerrain->tr_pixHeightMapHeight);
@@ -363,7 +368,7 @@ Rect ExtractPolygonsInBox(CTerrain *ptrTerrain, const FLOATaabbox3D &bboxExtract
   _aiExtIndices.Push(ctIndices);
 
   GFXVertex4 *pavVertices = &_avExtVertices[0];
-  INDEX *pauiIndices = &_aiExtIndices[0];
+  INDEX_T *pauiIndices = &_aiExtIndices[0];
 
   // for each row
   INDEX iy, ix;
@@ -451,7 +456,7 @@ Rect ExtractPolygonsInBox(CTerrain *ptrTerrain, const FLOATaabbox3D &bboxExtract
 }
 
 void ExtractVerticesInRect(CTerrain *ptrTerrain, Rect &rc, GFXVertex4 **pavVtx, 
-                          INDEX **paiInd, INDEX &ctVtx,INDEX &ctInd)
+                          INDEX_T **paiInd, INDEX &ctVtx,INDEX &ctInd)
 {
   _avExtVertices.PopAll();
   _aiExtIndices.PopAll();
@@ -492,7 +497,7 @@ void ExtractVerticesInRect(CTerrain *ptrTerrain, Rect &rc, GFXVertex4 **pavVtx,
     puwHeight+=iStepY;
   }
 
-  INDEX *pauiIndices = &_aiExtIndices[0];
+  INDEX_T *pauiIndices = &_aiExtIndices[0];
   INDEX ivx=0;
   //INDEX ind=0;
   INDEX iFacing=iFirstHeight;

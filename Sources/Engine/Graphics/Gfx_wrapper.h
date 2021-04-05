@@ -237,7 +237,7 @@ extern void (*gfxSetColorArray)( GFXColor *pcol);
 
 
 // draw prepared arrays
-extern void (*gfxDrawElements)( INDEX ctElem, INDEX *pidx);
+extern void (*gfxDrawElements)( INDEX ctElem, INDEX_T *pidx);
 
 // set constant color for subsequent rendering (until 1st gfxSetColorArray() call!)
 extern void (*gfxSetConstantColor)(COLOR col);

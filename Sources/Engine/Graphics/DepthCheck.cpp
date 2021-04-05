@@ -251,7 +251,7 @@ extern void CheckDelayedDepthPoints( const CDrawPort *pdp, INDEX iMirrorLevel/*=
   ASSERT( pdp!=NULL && iMirrorLevel>=0);
 
   // check only if time lapse allows
-  const CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
+  const CTimerValue tvNow = _pTimer->GetLowPrecisionTimer();
   const TIME tmDelta = (tvNow-_tvLast[iMirrorLevel]).GetSeconds();
   ASSERT( tmDelta>=0);
   if( gap_iOptimizeDepthReads==2 && tmDelta<0.1f) return;

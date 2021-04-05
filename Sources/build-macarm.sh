@@ -9,6 +9,6 @@ set -x
 rm -rf cmake-build
 mkdir $_
 cd $_
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_OSX_ARCHITECTURES=x86_64 .. $1
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_OSX_ARCHITECTURES=arm64 .. $1
 make -j$NCPU
 

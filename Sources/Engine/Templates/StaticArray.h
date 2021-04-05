@@ -61,7 +61,9 @@ public:
     sa_Array = NULL;
   }
   /* Destroy all objects, and reset the array to initial (empty) state. */
-  inline void Clear(void);
+  inline void Clear(void) {
+    if (sa_Count!=0) Delete(); 
+  }
 
   /* Random access operator. */
   inline Type &operator[](INDEX iObject)

@@ -65,7 +65,7 @@ typedef uint32_t UINT;
 #endif
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(__aarch64__) || defined(_ARCH_PPC64) \
-    || defined(_M_IA64) || defined(__IA64__)
+    || defined(_M_IA64) || defined(__IA64__) || defined(__e2k__)
 
   #define PLATFORM_64BIT 1
 
@@ -77,7 +77,6 @@ typedef uint32_t UINT;
 #else
   #error "Unknown CPU-Architecture, adapt this code to detect 32/64bitness of your system!"
 #endif
-
 
 // if the compiler complains about the typedef created by MY_STATIC_ASSERT being invalid
 // (because of array with negative size), it means the check for cond has failed

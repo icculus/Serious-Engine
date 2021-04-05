@@ -425,10 +425,10 @@ COLOR MulColors( COLOR col1, COLOR col2)
 
   conv1.col = col1;
   conv2.col = col2;
-  conv1.bytes[0] = (UBYTE) ((((DWORD) conv1.bytes[0]) * ((DWORD) conv2.bytes[0])) / 255);
-  conv1.bytes[1] = (UBYTE) ((((DWORD) conv1.bytes[1]) * ((DWORD) conv2.bytes[1])) / 255);
-  conv1.bytes[2] = (UBYTE) ((((DWORD) conv1.bytes[2]) * ((DWORD) conv2.bytes[2])) / 255);
-  conv1.bytes[3] = (UBYTE) ((((DWORD) conv1.bytes[3]) * ((DWORD) conv2.bytes[3])) / 255);
+  conv1.bytes[0] = (UBYTE) ((((DWORD) conv1.bytes[0]) * ((DWORD) conv2.bytes[0])) >> 8);
+  conv1.bytes[1] = (UBYTE) ((((DWORD) conv1.bytes[1]) * ((DWORD) conv2.bytes[1])) >> 8);
+  conv1.bytes[2] = (UBYTE) ((((DWORD) conv1.bytes[2]) * ((DWORD) conv2.bytes[2])) >> 8);
+  conv1.bytes[3] = (UBYTE) ((((DWORD) conv1.bytes[3]) * ((DWORD) conv2.bytes[3])) >> 8);
 
   return(conv1.col);
 #endif

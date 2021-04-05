@@ -22,10 +22,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Engine/Terrain/Terrain.h>
 // Extract polygons in given box and returns clipped rectangle
 Rect ExtractPolygonsInBox(CTerrain *ptrTerrain, const FLOATaabbox3D &bbox, GFXVertex4 **pavVtx,
-                          INDEX **paiInd, INDEX &ctVtx,INDEX &ctInd,BOOL bFixSize=FALSE);
+                          INDEX_T **paiInd, INDEX &ctVtx,INDEX &ctInd,BOOL bFixSize=FALSE);
 
 void ExtractVerticesInRect(CTerrain *ptrTerrain, Rect &rc, GFXVertex4 **pavVtx, 
-                          INDEX **paiInd, INDEX &ctVtx,INDEX &ctInd);
+                          INDEX_T **paiInd, INDEX &ctVtx,INDEX &ctInd);
 
 
 // check whether a polygon is below given point, but not too far away

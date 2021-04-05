@@ -417,7 +417,7 @@ void CLightSource::FindShadowLayersPoint(BOOL bSelectedOnly)
   }
 
   // for each layer of the light source
-  DOUBLE3D dvOrigin = FLOATtoDOUBLE(*_pvOrigin);
+  FLOAT3D dvOrigin = *_pvOrigin;
   {FORDELETELIST(CBrushShadowLayer, bsl_lnInLightSource, ls_lhLayers, itbsl) {
     CBrushPolygon *pbpo = itbsl->bsl_pbsmShadowMap->GetBrushPolygon();
     CEntity *penWithPolygon = pbpo->bpo_pbscSector->bsc_pbmBrushMip->bm_pbrBrush->br_penEntity;
@@ -490,7 +490,7 @@ void CLightSource::FindShadowLayersPoint(BOOL bSelectedOnly)
             if (!itbsc->bsc_boxBoundingBox.HasContactWith(_boxLight)
               ||(itbsc->bsc_bspBSPTree.bt_pbnRoot!=NULL
               &&!(itbsc->bsc_bspBSPTree.TestSphere(
-                 dvOrigin, FLOATtoDOUBLE(_rRange))>=0) )) {
+                 dvOrigin, _rRange)>=0) )) {
               // skip it
               continue;
             }

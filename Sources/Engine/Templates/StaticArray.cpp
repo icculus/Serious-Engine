@@ -30,12 +30,6 @@ inline void CStaticArray<Type>::operator=(const CStaticArray<Type> &arOriginal) 
   CopyArray(arOriginal);
 }
 
-template<class Type>
-/* Destroy all objects, and reset the array to initial (empty) state. */
-inline void CStaticArray<Type>::Clear(void) {
-  if (sa_Count!=0) Delete(); 
-}
-
 /*
  * Create a given number of objects.
  */

@@ -1,4 +1,5 @@
 /* Copyright (c) 2002-2012 Croteam Ltd. All rights reserved. */
+#define __STDC_LIMIT_MACROS 1
 
 #include <stdio.h>
 

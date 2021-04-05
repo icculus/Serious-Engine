@@ -17,7 +17,7 @@ cd $_
 #cmake -DCMAKE_BUILD_TYPE=Debug ..
 
 # Right now we force x86, though...
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 -DUSE_I386_NASM_ASM=TRUE ..
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 -DUSE_I386_NASM_ASM=TRUE .. $1
 
 make -j$NCPU
 

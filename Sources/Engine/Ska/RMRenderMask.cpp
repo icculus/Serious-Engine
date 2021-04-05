@@ -40,7 +40,7 @@ extern void InternalShader_Mask(void)
   INDEX ctIdx = shaGetIndexCount();
   INDEX ctVtx = shaGetVertexCount();
   if( ctIdx==0 || ctVtx==0) return;
-  INDEX *pidx = shaGetIndexArray();
+  INDEX_T *pidx = shaGetIndexArray();
   GFXVertex4  *pvtx = shaGetVertexArray();
   GFXTexCoord *ptex = shaGetUVMap(0);
   CTextureObject *pto = shaGetTexture(0);

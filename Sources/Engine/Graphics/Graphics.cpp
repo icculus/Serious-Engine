@@ -882,7 +882,7 @@ nextRowO:
 #else
   union uConv
   {
-    ULONG val;
+    __int64 val;
     DWORD dwords[2];
     UWORD words[4];
     WORD  iwords[4];
@@ -891,7 +891,8 @@ nextRowO:
   for (int i=0; i<pixHeight; i++) {
     int idx = i&3;
     uConv dith;
-    dith.val = pulDitherTable[idx];
+    dith.dwords[0] = pulDitherTable[idx];
+    dith.dwords[1] = pulDitherTable[idx+1];
     for (int j=0; j<4; j++) { dith.words[j] >>= mmShifter; }
     dith.val &= mmMask;
     uConv* src = (uConv*)(pulSrc+i*pixWidth);

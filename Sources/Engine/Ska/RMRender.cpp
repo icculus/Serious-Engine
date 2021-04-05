@@ -767,7 +767,7 @@ void RM_RenderGround(CTextureObject &to)
 
   GFXVertex vBoxVtxs[4];
   GFXTexCoord tcBoxTex[4];
-  INDEX aiIndices[6];
+  INDEX_T aiIndices[6] = {0, 2, 1, 0 ,3 ,2};
 
   // set ground vertices
   vBoxVtxs[0].x =  vVtx(1); vBoxVtxs[0].y =  vVtx(2); vBoxVtxs[0].z = -vVtx(3);
@@ -783,8 +783,8 @@ void RM_RenderGround(CTextureObject &to)
   for(INDEX ivx=0;ivx<4;ivx++) {
     TransformVertex(vBoxVtxs[ivx],_mAbsToViewer);
   }
-  aiIndices[0] = 0; aiIndices[1] = 2; aiIndices[2] = 1;
-  aiIndices[3] = 0; aiIndices[4] = 3; aiIndices[5] = 2;
+  /*aiIndices[0] = 0; aiIndices[1] = 2; aiIndices[2] = 1;
+  aiIndices[3] = 0; aiIndices[4] = 3; aiIndices[5] = 2;*/
 
   gfxSetVertexArray(vBoxVtxs,4);
   gfxSetTexCoordArray(tcBoxTex, FALSE);
@@ -852,8 +852,21 @@ static void RenderBox(FLOAT3D vMinVtx, FLOAT3D vMaxVtx, COLOR col)
   for(INDEX iwx=0;iwx<8;iwx++) {
     TransformVertex(vBoxVtxs[iwx],_mObjToViewStretch);
   }
-  INDEX aiIndices[36];
-  aiIndices[ 0] = 0; aiIndices[ 1] = 3; aiIndices[ 2] = 1;
+  INDEX_T aiIndices[36] = { 
+    0, 3, 1,
+    0, 2, 3,
+    5, 1, 3,
+    7, 5, 3,
+    2, 7, 3,
+    6, 7, 2,
+    4, 2, 0,
+    4, 6, 2,
+    5, 0, 1,
+    5, 4, 0,
+    4, 5, 7,
+    6, 4, 7
+  };
+  /*aiIndices[ 0] = 0; aiIndices[ 1] = 3; aiIndices[ 2] = 1;
   aiIndices[ 3] = 0; aiIndices[ 4] = 2; aiIndices[ 5] = 3;
   aiIndices[ 6] = 5; aiIndices[ 7] = 1; aiIndices[ 8] = 3;
   aiIndices[ 9] = 7; aiIndices[10] = 5; aiIndices[11] = 3;
@@ -864,7 +877,7 @@ static void RenderBox(FLOAT3D vMinVtx, FLOAT3D vMaxVtx, COLOR col)
   aiIndices[24] = 5; aiIndices[25] = 0; aiIndices[26] = 1;
   aiIndices[27] = 5; aiIndices[28] = 4; aiIndices[29] = 0;
   aiIndices[30] = 4; aiIndices[31] = 5; aiIndices[32] = 7;
-  aiIndices[33] = 6; aiIndices[34] = 4; aiIndices[35] = 7;
+  aiIndices[33] = 6; aiIndices[34] = 4; aiIndices[35] = 7;*/
 
   gfxSetVertexArray(vBoxVtxs,8);
   gfxDrawElements(36,aiIndices);

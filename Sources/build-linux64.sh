@@ -14,10 +14,12 @@ cd $_
 #ninja
 
 # This is the eventual path for amd64.
-cmake -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .. $1
 
 # Right now we force x86, though...
 #cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 ..
-
+echo "ECC first"
+make ecc
+echo "Then the rest..."
 make -j$NCPU
 

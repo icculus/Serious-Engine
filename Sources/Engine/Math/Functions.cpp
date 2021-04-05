@@ -69,7 +69,7 @@ double adCosQuadrants[4][2] =
   {1.0, -90.0},
   {1.0, 0.0},
 };
-
+/*
 FLOAT Sin(ANGLE a)
 {
   double aWrapped = WrapAngle(a);
@@ -92,3 +92,4 @@ FLOAT Tan(ANGLE a)
 {
   return Sin(a)/Cos(a);
 }
+*/

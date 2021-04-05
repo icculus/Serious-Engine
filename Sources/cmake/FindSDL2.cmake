@@ -68,6 +68,7 @@
 SET(SDL2_SEARCH_PATHS
 	~/Library/Frameworks
 	/Library/Frameworks
+	/usr/include/x86_64-linux-gnu/SDL2
 	/usr/local
 	/usr
 	/sw # Fink

@@ -97,7 +97,7 @@ public:
   inline ULONG GetNoOfFineMips(void) const { return td_ctFineMipLevels; };
 
   // mark that texture has been used
-  inline void MarkDrawn(void) { td_tvLastDrawn = _pTimer->GetHighPrecisionTimer(); };
+  inline void MarkDrawn(void) { td_tvLastDrawn = _pTimer->GetLowPrecisionTimer(); };
 
   // get string description of texture size, mips and parameters
   CTString GetDescription(void);

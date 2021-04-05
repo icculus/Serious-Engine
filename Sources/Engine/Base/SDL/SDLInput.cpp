@@ -2,6 +2,7 @@
 
 /* rcg10072001 Moved stuff into this file. */
 
+#define __STDC_LIMIT_MACROS 1
 #include "SDL.h"
 
 #include <Engine/Base/Timer.h>
@@ -724,7 +725,7 @@ void CInput::GetInput(BOOL bPreScan)
     // clear button's buffer
     memset( inp_ubButtonsBuffer, 0, sizeof( inp_ubButtonsBuffer));
 
-    Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
     // for each Key
     for (INDEX iKey=0; iKey<ARRAYCOUNT(_akcKeys); iKey++) {
       const KeyConversion &kc = _akcKeys[iKey];

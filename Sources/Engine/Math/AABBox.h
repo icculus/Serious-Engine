@@ -400,6 +400,53 @@ inline FLOATaabbox3D DOUBLEtoFLOAT(const DOUBLEaabbox3D &pld) {
   return FLOATaabbox3D( DOUBLEtoFLOAT(pld.Min()), DOUBLEtoFLOAT(pld.Max()));
 }
 
+/* Specialized copy for FLOATaabb3D */
+
+/* Check if intersects or touches another bounding box. */
+template<>
+inline BOOL AABBox<FLOAT, 3>::HasContactWith(const AABBox<FLOAT, 3> &b) const
+{
+    // if spans in any dimension don't have contact
+    if (maxvect(1)<b.minvect(1) || minvect(1)>b.maxvect(1) 
+     || maxvect(2)<b.minvect(2) || minvect(2)>b.maxvect(2) 
+     || maxvect(3)<b.minvect(3) || minvect(3)>b.maxvect(3) 
+    ) {
+      // whole bounding boxes don't have contact
+      return FALSE;
+    }
+  return TRUE;
+}
+/* Check if intersects or touches another bounding box. */
+template<>
+inline BOOL AABBox<FLOAT, 3>::HasContactWith(const AABBox<FLOAT, 3> &b, FLOAT tEpsilon) const
+{
+    // if spans in any dimension don't have contact
+    if( (maxvect(1)+tEpsilon<b.minvect(1)) ||(minvect(1)-tEpsilon>b.maxvect(1)) 
+     || (maxvect(2)+tEpsilon<b.minvect(2)) ||(minvect(2)-tEpsilon>b.maxvect(2)) 
+     || (maxvect(3)+tEpsilon<b.minvect(3)) ||(minvect(3)-tEpsilon>b.maxvect(3)) 
+    ) {
+      // whole bounding boxes don't have contact
+      return FALSE;
+    }
+  return TRUE;
+}
+/* Check if intersects or touches a sphere. */
+template<>
+inline BOOL AABBox<FLOAT, 3>::TouchesSphere(
+  const Vector<FLOAT, 3> &vSphereCenter, FLOAT fSphereRadius) const
+{
+    // if spans in any dimension don't have contact
+    if( (vSphereCenter(1)+fSphereRadius<minvect(1)) ||(vSphereCenter(1)-fSphereRadius>maxvect(1))
+     || (vSphereCenter(2)+fSphereRadius<minvect(2)) ||(vSphereCenter(2)-fSphereRadius>maxvect(2)) 
+     || (vSphereCenter(3)+fSphereRadius<minvect(3)) ||(vSphereCenter(3)-fSphereRadius>maxvect(3)) 
+    ) {
+      // no contact
+      return FALSE;
+    }
+  return TRUE;
+}
+
+
 
 #endif  /* include-once check. */
 

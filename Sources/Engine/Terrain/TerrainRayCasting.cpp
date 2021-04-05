@@ -32,7 +32,7 @@ static FLOATplane3D _plHitPlane;     // hit plane
 
 // TEMP
 static CStaticStackArray<GFXVertex> _avRCVertices;
-static CStaticStackArray<INDEX>     _aiRCIndices;
+static CStaticStackArray<INDEX_T>     _aiRCIndices;
 static FLOAT3D _vHitBegin;
 static FLOAT3D _vHitEnd;
 static FLOAT   _fDistance;
@@ -89,7 +89,7 @@ static FLOAT HitCheckQuad(const PIX ix, const PIX iz)
        (pvx[0].y<=_fMaxHeight || pvx[2].y<=_fMinHeight || pvx[1].y<=_fMinHeight) &&
        ((pvx[0].shade + pvx[2].shade + pvx[1].shade == 255*3) | _bHitInvisibleTris)) {
       // Add this triangle
-      INDEX *pind = _aiRCIndices.Push(3);
+      INDEX_T *pind = _aiRCIndices.Push(3);
       pind[0] = ctVertices+0;
       pind[1] = ctVertices+2;
       pind[2] = ctVertices+1;
@@ -100,7 +100,7 @@ static FLOAT HitCheckQuad(const PIX ix, const PIX iz)
        (pvx[1].y<=_fMaxHeight || pvx[2].y<=_fMaxHeight || pvx[3].y<=_fMaxHeight) &&
        ((pvx[1].shade + pvx[2].shade + pvx[3].shade == 255*3) | _bHitInvisibleTris)) {
       // Add this triangle
-      INDEX *pind = _aiRCIndices.Push(3);
+      INDEX_T *pind = _aiRCIndices.Push(3);
       pind[0] = ctVertices+1;
       pind[1] = ctVertices+2;
       pind[2] = ctVertices+3;
@@ -112,7 +112,7 @@ static FLOAT HitCheckQuad(const PIX ix, const PIX iz)
        (pvx[2].y<=_fMaxHeight || pvx[3].y<=_fMaxHeight || pvx[0].y<=_fMaxHeight) &&
        ((pvx[2].shade + pvx[3].shade + pvx[0].shade == 255*3) | _bHitInvisibleTris)) {
       // Add this triangle
-      INDEX *pind = _aiRCIndices.Push(3);
+      INDEX_T *pind = _aiRCIndices.Push(3);
       pind[0] = ctVertices+2;
       pind[1] = ctVertices+3;
       pind[2] = ctVertices+0;
@@ -123,7 +123,7 @@ static FLOAT HitCheckQuad(const PIX ix, const PIX iz)
        (pvx[0].y<=_fMaxHeight || pvx[3].y<=_fMaxHeight || pvx[1].y<=_fMaxHeight) &&
        ((pvx[0].shade + pvx[3].shade + pvx[1].shade == 255*3) | _bHitInvisibleTris)) {
       // Add this triangle
-      INDEX *pind = _aiRCIndices.Push(3);
+      INDEX_T *pind = _aiRCIndices.Push(3);
       pind[0] = ctVertices+0;
       pind[1] = ctVertices+3;
       pind[2] = ctVertices+1;
@@ -135,10 +135,10 @@ static FLOAT HitCheckQuad(const PIX ix, const PIX iz)
     return fDistance;
   }
 
-  INDEX *paiIndices = &_aiRCIndices[_aiRCIndices.Count() - ctIndices];
+  INDEX_T *paiIndices = &_aiRCIndices[_aiRCIndices.Count() - ctIndices];
   // for each triangle
   for(INDEX iTri=0;iTri<ctIndices;iTri+=3) {
-    INDEX *pind = &paiIndices[iTri];
+    INDEX_T *pind = &paiIndices[iTri];
     GFXVertex &v0 = pavVertices[pind[0]];
     GFXVertex &v1 = pavVertices[pind[1]];
     GFXVertex &v2 = pavVertices[pind[2]];

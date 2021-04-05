@@ -97,7 +97,7 @@ ENGINE_API void shaSetVertexArray(GFXVertex4 *paVertices,INDEX ctVertices);
 // Set array of normals
 ENGINE_API void shaSetNormalArray(GFXNormal *paNormals);
 // Set array of indices
-ENGINE_API void shaSetIndices(INDEX *paIndices, INDEX ctIndices);
+ENGINE_API void shaSetIndices(INDEX_T *paIndices, INDEX ctIndices);
 // Set array of texture objects for shader
 ENGINE_API void shaSetTextureArray(CTextureObject **paTextureObject, INDEX ctTextures);
 // Set array of uv maps
@@ -159,7 +159,7 @@ ENGINE_API COLOR &shaGetCurrentColor(void);
 // Get vertex array
 ENGINE_API GFXVertex4 *shaGetVertexArray(void);
 // Get index array
-ENGINE_API INDEX *shaGetIndexArray(void);
+ENGINE_API INDEX_T *shaGetIndexArray(void);
 // Get normal array
 ENGINE_API GFXNormal *shaGetNormalArray(void);
 // Get uvmap array from array of uvmaps

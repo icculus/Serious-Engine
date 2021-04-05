@@ -33,7 +33,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Engine/CurrentVersion.h>
 #include <GameMP/Game.h>
 #define DECL_DLL
+#ifdef FIRST_ENCOUNTER
+#include <Entities/Global.h>
+#else
 #include <EntitiesMP/Global.h>
+#endif
 #include "resource.h"
 #include "SplashScreen.h"
 #include "MainWindow.h"
@@ -471,6 +475,17 @@ BOOL Init( HINSTANCE hInstance, int nCmdShow, CTString strCmdLine)
     FatalError("SDL_Init(VIDEO|AUDIO) failed. Reason: [%s].", SDL_GetError());
   atexit(atexit_sdlquit);
   SDL_Init(SDL_INIT_JOYSTICK);  // don't care if this fails.
+#endif
+
+#ifdef PLATFORM_PANDORA
+  // enable Cortex A8 RunFast
+  int v = 0;
+  __asm__ __volatile__ (
+    "vmrs %0, fpscr\n"
+    "orr  %0, #((1<<25)|(1<<24))\n" // default NaN, flush-to-zero
+    "vmsr fpscr, %0\n"
+    //"vmrs %0, fpscr\n"
+    : "=&r"(v));
 #endif
 
   _hInstance = hInstance;

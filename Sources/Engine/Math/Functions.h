@@ -495,9 +495,15 @@ inline FLOAT RadAngle(ANGLE aAngle) {
   return FLOAT (WrapAngle(aAngle)*PI/ANGLE_180);
 }
 
-ENGINE_API FLOAT Sin(ANGLE a);
-ENGINE_API FLOAT Cos(ANGLE a);
-ENGINE_API FLOAT Tan(ANGLE a);
+#ifdef __arm__
+inline ENGINE_API FLOAT Sin(ANGLE a) { return sinf(a*(PI/ANGLE_180)); };
+inline ENGINE_API FLOAT Cos(ANGLE a) { return cosf(a*(PI/ANGLE_180)); };
+inline ENGINE_API FLOAT Tan(ANGLE a) { return tanf(a*(PI/ANGLE_180)); };
+#else
+inline ENGINE_API FLOAT Sin(ANGLE a) { return sin(a*(PI/ANGLE_180)); };
+inline ENGINE_API FLOAT Cos(ANGLE a) { return cos(a*(PI/ANGLE_180)); };
+inline ENGINE_API FLOAT Tan(ANGLE a) { return tan(a*(PI/ANGLE_180)); };
+#endif
 
 #ifdef __arm__
 inline ENGINE_API FLOAT SinFast(ANGLE a) { return sinf(a*(PI/ANGLE_180)); };

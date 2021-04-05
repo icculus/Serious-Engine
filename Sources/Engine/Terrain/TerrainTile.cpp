@@ -164,7 +164,7 @@ inline void CTerrainTile::AddTriangle(INDEX iind1,INDEX iind2,INDEX iind3)
     }
 
     // Add one triangle
-    INDEX *pIndices = GetIndices().Push(3);
+    INDEX_T *pIndices = GetIndices().Push(3);
     pIndices[0] = iind1;
     pIndices[1] = iind2;
     pIndices[2] = iind3;
@@ -181,14 +181,14 @@ inline void CTerrainTile::AddTriangle(INDEX iind1,INDEX iind2,INDEX iind3)
 
       COLOR ul = ttl.tl_acColors[iind1].ub.a + ttl.tl_acColors[iind2].ub.a + ttl.tl_acColors[iind3].ub.a;
       if(ul>0) {
-        INDEX *pIndices = ttl.tl_auiIndices.Push(3);
+        INDEX_T *pIndices = ttl.tl_auiIndices.Push(3);
         pIndices[0] = iind1;
         pIndices[1] = iind2;
         pIndices[2] = iind3;
       }
     }
   } else {
-    INDEX *pIndices = GetIndices().Push(3);
+    INDEX_T *pIndices = GetIndices().Push(3);
     pIndices[0] = iind1;
     pIndices[1] = iind2;
     pIndices[2] = iind3;
@@ -309,7 +309,7 @@ void CTerrainTile::ReGenerateTileLayer(INDEX iTileLayer)
   ASSERT(ttl.tl_avVertices.Count()==0 && ttl.tl_atcTexCoords.Count()==0 && ttl.tl_auiIndices.Count()==0);
   GFXVertex   *pvtx = ttl.tl_avVertices.Push(ctVertices);
   GFXTexCoord *ptc  = ttl.tl_atcTexCoords.Push(ctVertices);
-  INDEX       *pind = ttl.tl_auiIndices.Push(ctIndices);
+  INDEX_T     *pind = ttl.tl_auiIndices.Push(ctIndices);
   UBYTE       *pubMask = tl.tl_aubColors;
 
   INDEX ivx  = 0;
@@ -565,7 +565,7 @@ void CTerrainTile::UpdateQuadTreeNode()
   // resize aabox for this node
   FLOATaabbox3D bboxNewBox;
   GFXVertex4 *pavVertices;
-  INDEX      *paiIndices;
+  INDEX_T    *paiIndices;
   INDEX       ctVertices;
   INDEX       ctIndices;
   QuadTreeNode &qtn = _ptrTerrain->tr_aqtnQuadTreeNodes[tt_iIndex];
@@ -973,7 +973,7 @@ __forceinline CStaticStackArray<GFXTexCoord> &CTerrainTile::GetDetailTC() {
   TileArrays &ta = ah.ah_ataTileArrays[tt_iArrayIndex];
   return ta.ta_auvDetailMap;
 }
-__forceinline CStaticStackArray<INDEX> &CTerrainTile::GetIndices() {
+__forceinline CStaticStackArray<INDEX_T> &CTerrainTile::GetIndices() {
   ASSERT(tt_iArrayIndex!=-1);
   ASSERT(tt_iLod!=-1);
   CArrayHolder &ah = _ptrTerrain->tr_aArrayHolders[tt_iLod];

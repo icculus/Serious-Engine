@@ -60,9 +60,9 @@ public:
     Type &tMin,
     Type &tMax) const;
   /* Test if a sphere is inside, outside, or intersecting. (Just a trivial rejection test) */
-  FLOAT TestSphere(const Vector<Type, iDimensions> &vSphereCenter, Type tSphereRadius) const;
+  FLOAT FASTMATH TestSphere(const Vector<Type, iDimensions> &vSphereCenter, Type tSphereRadius) const;
   /* Test if a box is inside, outside, or intersecting. (Just a trivial rejection test) */
-  FLOAT TestBox(const OBBox<Type> &box) const;
+  FLOAT FASTMATH TestBox(const OBBox<Type> &box) const;
   /* Read/write entire bsp tree to disk. */
   void Read_t(CTStream &strm); // throw char *
   void Write_t(CTStream &strm); // throw char *

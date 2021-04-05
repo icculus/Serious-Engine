@@ -332,7 +332,7 @@ static void PrepareSurfaceElements( ModelMipInfo &mmi, MappingSurface &ms)
 
   // create elements
   ms.ms_ctSrfEl = ctTriangles*3;
-  INDEX *paiElements = mmi.mmpi_aiElements.Push(ms.ms_ctSrfEl);
+  INDEX_T *paiElements = mmi.mmpi_aiElements.Push(ms.ms_ctSrfEl);
   // dump all triangles
   //_RPT0(_CRT_WARN, "Result:\n");
   INDEX iel = 0;
@@ -587,7 +587,7 @@ static void SetCol(void)
   _icol = (_icol+1)%_ctcol;
 }
 
-static void DrawStrips( const INDEX ct, const INDEX *pai)
+static void DrawStrips( const INDEX ct, const INDEX_T *pai)
 {
   // set strip color
   pglDisableClientState( GL_COLOR_ARRAY);
@@ -603,9 +603,9 @@ static void DrawStrips( const INDEX ct, const INDEX *pai)
 
   while( i<ct/3)
   {
-    INDEX i0 = pai[i*3+0];
-    INDEX i1 = pai[i*3+1];
-    INDEX i2 = pai[i*3+2];
+    INDEX_T i0 = pai[i*3+0];
+    INDEX_T i1 = pai[i*3+1];
+    INDEX_T i2 = pai[i*3+2];
     ctMaxTriPerStrip = Max( ctMaxTriPerStrip, INDEX(iInStrip));
 
     if( iInStrip==0) {
@@ -759,7 +759,7 @@ static BOOL IsModelInHaze( FLOAT3D &vMin, FLOAT3D &vMax)
 
 
 // render all pending elements
-static void FlushElements( INDEX ctElem, INDEX *pai)
+static void FlushElements( INDEX ctElem, INDEX_T *pai)
 {
   ASSERT(ctElem>0);
   // choose rendering mode
@@ -2106,6 +2106,37 @@ vtxRest:
 vtxEnd:
       pop     ebx
     }
+#elif defined(__ARM_NEON__) && !defined (PLATFORM_MACOSX)
+    register float tc_u __asm__("s0") = fTexCorrU;
+    register float tc_v __asm__("s1") = fTexCorrV;
+    const void *tc_src = pvTexCoord->vector;
+    GFXTexCoord *tc_dst = ptexSrfBase;
+    int tc_cnt = ctSrfVx;
+    __asm__ __volatile__ (
+      "vmov     d1, d0\n"
+      "0:\n"
+      "subs     %[c], #2\n"
+      "blt      1f\n"
+      "vld1.32  {d2}, [%[src]]\n"
+      "add      %[src], %[src_s]\n"
+      "vld1.32  {d3}, [%[src]]\n"
+      "add      %[src], %[src_s]\n"
+      "vmul.f32 q1, q1, q0\n"
+      "pld      [%[src], #64]\n"
+      "vst1.32  {q1}, [%[dst]]!\n"
+      "b        0b\n"
+      "1:\n"
+      "tst      %[c], #1\n"
+      "beq      2f\n"
+      "vld1.32  {d2}, [%[src]]\n"
+      "vmul.f32 d2, d2, d0\n"
+      "vst1.32  {d2}, [%[dst]]\n"
+      "2:\n"
+      : [c] "=&r"(tc_cnt), [src] "=&r"(tc_src), [dst] "=&r"(tc_dst)
+      :     "[c]"(tc_cnt),     "[src]"(tc_src),     "[dst]"(tc_dst),
+        "t"(tc_u), "t"(tc_v), [src_s] "I"(sizeof(pvTexCoord[0]))
+      : "d1", "q1", "cc", "memory"
+    );
 #else
     // setup texcoord array
     for( INDEX iSrfVx=0; iSrfVx<ctSrfVx; iSrfVx++) {

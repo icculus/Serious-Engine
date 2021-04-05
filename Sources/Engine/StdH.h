@@ -17,6 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define ENGINE_INTERNAL 1
 #define ENGINE_EXPORTS 1
 
+#define __STDC_LIMIT_MACROS 1
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>

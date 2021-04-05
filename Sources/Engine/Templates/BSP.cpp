@@ -506,6 +506,310 @@ FLOAT BSPNode<Type, iDimensions>::TestSphere(const Vector<Type, iDimensions> &vS
     }
   }
 }
+
+#ifdef SPHERE_HACK
+// truncate doubles in d0-d3 to floats in d0-d1
+// destroys d2-d7
+#define doubles_to_floats \
+	  "vmov.i32  q3, #0xff800000\n" \
+	  "vshrn.i64 d4, q0, #29\n" \
+	  "vshrn.i64 d5, q1, #29\n" \
+	  "vshrn.i64 d0, q0, #32\n" \
+	  "vshrn.i64 d1, q1, #32\n" \
+	  "vsub.i32  q2, q3\n" \
+	  "vbic.i32  q3, #0xc0000000\n" \
+	  "vshl.i32  q1, q0, #1\n" \
+	  "vceq.i32  q1, q1, #0\n" \
+	  "vadd.i32  q2, q3\n" \
+	  "vorr.i32  q1, #0x80000000\n" \
+	  "vbif.32   q0, q2, q1\n"
+
+// params[6]: vec[3], -1, radius, -radius
+template<>
+int BSPNode<double, 3>::TestSphere_hack(const FLOAT *params) const
+{
+  const BSPNode<double, 3> *node, *next;
+
+#ifdef __arm__
+  register double params_q8 __asm__("q8");
+  __asm__ __volatile__ (
+    "vld1.64   {d16,d17},  [%[prm], :64]\n"
+    :       "=w"(params_q8)
+    : [prm] "r"(params)
+  );
+#endif
+
+  node = this;
+  for (;;)
+  {
+#ifdef __arm__
+    register double vec_q0 __asm__("q0");
+    register double vec_d2 __asm__("d2");
+    __asm__ __volatile__ (
+      "vld1.64   {d0,d1,d2}, [%[vec], :64]\n"
+      :       "=w"(vec_q0), "=w"(vec_d2)
+      : [vec] "r"(node->vector)
+    );
+#endif
+    // if this is an inside node
+    if (node->bn_bnlLocation == BNL_INSIDE) {
+      // it is inside
+      return 1;
+    // if this is an outside node
+    } else if (node->bn_bnlLocation == BNL_OUTSIDE) {
+      // it is outside
+      return -1;
+    // if this is a branch
+    } else {
+      ASSERT(node->bn_bnlLocation == BNL_BRANCH);
+      // test the sphere against the split plane
+      //double tCenterDistance = node->PointDistance(vSphereCenter);
+#ifdef __arm__
+      register double dist_d3 __asm__("d3") = node->pl_distance;
+
+      __asm__ __volatile__ (
+        doubles_to_floats
+        "vmul.f32  q0, q0, q8\n"
+        "ldr       r2, %[pbnF]\n"
+        "vldr      d2, %[rad]\n"
+        "ldr       r3, %[pbnB]\n"
+        "vpadd.f32 d0, d0, d1\n"
+        "vmov      d3, r3, r2\n" // pbnF.pbnB
+        "vpadd.f32 d0, d0, d0\n" // tCenterDistance
+        "vcgt.f32  d4, d0, d2\n" // [0] tCenterDistance > radius
+        "vcgt.f32  d5, d2, d0\n" // [1] -radius > tCenterDistance
+        "vext.32   d0, d5, d4, #1\n" // [0].[1]
+        "vand      d0, d3\n"
+        "vpadd.i32 d0, d3\n"
+        "vmov.i32  %[next], d0[0]\n"
+        : [next] "=r"(next),
+          "=w"(vec_q0), "=w"(vec_d2), "=w"(dist_d3)
+        : "w"(vec_q0),  "w"(vec_d2),  "w"(dist_d3), "w"(params_q8),
+          [pbnF] "m"(node->bn_pbnFront),
+          [pbnB] "m"(node->bn_pbnBack),
+          [rad]  "m"(params[4])
+        : "r2", "r3", "q2", "q3"
+      );
+#else
+      float tCenterDistance =
+        node->vector[0] * params[0] +
+        node->vector[1] * params[1] +
+        node->vector[2] * params[2] - node->pl_distance;
+
+      // if the sphere is in front of the plane
+      if (tCenterDistance > +params[4]) {
+        next = node->bn_pbnFront;
+      // if the sphere is behind the plane
+      } else if (tCenterDistance < params[5]) {
+        next = node->bn_pbnBack;
+      // if the sphere is split by the plane
+      } else {
+        next = NULL;
+      }
+#endif
+      if (next == NULL)
+        break;
+      node = next;
+    }
+  }
+
+  // if front node touches
+  int iFront = node->bn_pbnFront->TestSphere_hack(params);
+  if (iFront==0) {
+    // it touches
+    return 0;
+  }
+  // if back node touches
+  int iBack = node->bn_pbnBack->TestSphere_hack(params);
+  if (iBack==0) {
+    // it touches
+    return 0;
+  }
+  // if front and back have same classification
+  if (iFront==iBack) {
+    // return it
+    return iFront;
+  // if front and back have different classification
+  } else {
+    // it touches
+    return 0;
+  }
+}
+
+// _ZNK7BSPNodeIdLi3EE10TestSphereERK6VectorIdLi3EEd
+template<>
+FLOAT BSPNode<double, 3>::TestSphere(const Vector<double, 3> &vSphereCenter, double tSphereRadius) const
+{
+  float params[6] __attribute__((aligned(8)));
+
+#ifdef __arm__
+  register double radius __asm__("d3") = tSphereRadius;
+  __asm__ __volatile__ (
+    "vld1.64   {d0,d1,d2}, [%[vec], :64]\n"
+    doubles_to_floats
+    "vmov.i32  d4, #0\n"
+    "vmov.i32  d4[1], %[sgn]\n"
+    "vmov.f32  d3, #-1.0\n"
+    "vdup.32   d2, d1[1]\n"
+    "vsli.i64  d1, d3, #32\n"
+    "veor      d2, d4\n"
+    "vst1.32   {d0,d1,d2}, [%[prm], :64]\n"
+    :       "=w"(radius)
+    : [vec] "r"(vSphereCenter.vector),
+      [prm] "r"(params),
+      [sgn] "r"(0x80000000),
+            "w"(radius)
+    : "q0", "d2", "q2", "q3"
+  );
+#else
+  params[0] = vSphereCenter.vector[0];
+  params[1] = vSphereCenter.vector[1];
+  params[2] = vSphereCenter.vector[2];
+  params[3] = -1.0f;
+  params[4] = tSphereRadius;
+  params[5] = -tSphereRadius;
+#endif
+
+  return TestSphere_hack(params);
+}
+
+// params[6]: vec[3], -1, radius, -radius
+template<>
+int BSPNode<float, 3>::TestSphere_hack(const FLOAT *params) const
+{
+  const BSPNode<float, 3> *node = this;
+
+#ifdef __arm__
+  register double params_q8 __asm__("q8");
+  register double radius_d18 __asm__("d18");
+  register double cdist_d6 __asm__("d6");
+  __asm__ __volatile__ (
+    "vld1.32   {d0,d1}, [%[vec]]\n"
+    "vldr      s3, %[dist]\n"
+    "vld1.64   {d16,d17,d18}, [%[prm], :64]\n"
+    "vmul.f32  q0, q0, q8\n"
+    "vpadd.f32 d6, d0, d1\n"
+    :       "=w"(cdist_d6),
+            "=w"(params_q8),
+            "=w"(radius_d18)
+    : [prm]  "r"(params),
+      [vec]  "r"(node->vector),
+      [dist] "m"(node->pl_distance)
+  );
+#endif
+
+  for (;;)
+  {
+    // if this is an inside node
+    if (node->bn_bnlLocation == BNL_INSIDE) {
+      // it is inside
+      return 1;
+    // if this is an outside node
+    } else if (node->bn_bnlLocation == BNL_OUTSIDE) {
+      // it is outside
+      return -1;
+    // if this is a branch
+    } else {
+      ASSERT(node->bn_bnlLocation == BNL_BRANCH);
+      // test the sphere against the split plane
+      //float tCenterDistance = node->PointDistance(vSphereCenter);
+#ifdef __arm__
+      int gt_radius, lt_nradius;
+      __asm__ __volatile__ (
+        "vpadd.f32 d6, d6, d6\n"  // tCenterDistance
+        "vld1.32   {d0,d1}, [%[pbnFv]]\n"
+        "vldr      s3, %[pbnFd]\n"
+        "vcgt.f32  d4, d6, d18\n" // [0] tCenterDistance > radius
+        "vcgt.f32  d5, d18, d6\n" // [1] -radius > tCenterDistance
+        "vld1.32   {d2,d3}, [%[pbnBv]]\n"
+        "vldr      s7, %[pbnBd]\n"
+        "vmov.i32  %[gt], d4[0]\n"
+        "vmov.i32  %[lt], d5[1]\n"
+
+        "vdup.i32  q2, d5[1]\n"
+        "vbit      q0, q1, q2\n"
+        "vmul.f32  q0, q0, q8\n"
+        "vpadd.f32 d6, d0, d1\n"
+        : [gt] "=r"(gt_radius), [lt] "=r"(lt_nradius),
+          "=w"(cdist_d6)
+        : "w"(cdist_d6), "w"(params_q8), "w"(radius_d18),
+          [pbnFv] "r"(node->bn_pbnFront->vector),
+          [pbnFd] "m"(node->bn_pbnFront->pl_distance),
+          [pbnBv] "r"(node->bn_pbnBack->vector),
+          [pbnBd] "m"(node->bn_pbnBack->pl_distance)
+        : "q0", "q1", "q2", "d7"
+      );
+
+      // if the sphere is in front of the plane
+      if (gt_radius) {
+        node = node->bn_pbnFront;
+      // if the sphere is behind the plane
+      } else if (lt_nradius) {
+        node = node->bn_pbnBack;
+      // if the sphere is split by the plane
+      } else {
+        break;
+      }
+#else
+      float tCenterDistance =
+        node->vector[0] * params[0] +
+        node->vector[1] * params[1] +
+        node->vector[2] * params[2] - node->pl_distance;
+
+      // if the sphere is in front of the plane
+      if (tCenterDistance > +params[4]) {
+        node = node->bn_pbnFront;
+      // if the sphere is behind the plane
+      } else if (tCenterDistance < params[5]) {
+        node = node->bn_pbnBack;
+      // if the sphere is split by the plane
+      } else {
+        break;
+      }
+#endif
+    }
+  }
+
+  // if front node touches
+  int iFront = node->bn_pbnFront->TestSphere_hack(params);
+  if (iFront==0) {
+    // it touches
+    return 0;
+  }
+  // if back node touches
+  int iBack = node->bn_pbnBack->TestSphere_hack(params);
+  if (iBack==0) {
+    // it touches
+    return 0;
+  }
+  // if front and back have same classification
+  if (iFront==iBack) {
+    // return it
+    return iFront;
+  // if front and back have different classification
+  } else {
+    // it touches
+    return 0;
+  }
+}
+
+template<>
+FLOAT BSPNode<float, 3>::TestSphere(const Vector<float, 3> &vSphereCenter, float tSphereRadius) const
+{
+  float params[6] __attribute__((aligned(8)));
+
+  params[0] = vSphereCenter.vector[0];
+  params[1] = vSphereCenter.vector[1];
+  params[2] = vSphereCenter.vector[2];
+  params[3] = -1.0f;
+  params[4] = tSphereRadius;
+  params[5] = -tSphereRadius;
+
+  return TestSphere_hack(params);
+}
+
+#endif
+
 /* Test if a box is inside, outside, or intersecting. (Just a trivial rejection test) */
 template<class Type, int iDimensions>
 FLOAT BSPNode<Type, iDimensions>::TestBox(const OBBox<Type> &box) const
@@ -1210,7 +1514,10 @@ void BSPTree<Type, iDimensions>::Read_t(CTStream &strm) // throw char *
     BSPNode<Type, iDimensions> &bn = bt_abnNodes[iNode];
     // read it from disk
     //strm.Read_t(&(Plane<Type, iDimensions>&)bn, sizeof(Plane<Type, iDimensions>));
-    strm >> ((Plane<Type, iDimensions>&)bn);
+    //strm >> ((Plane<Type, iDimensions>&)bn);
+    Plane<DOUBLE, iDimensions> tmp;
+    strm >> tmp;
+    ((Plane<FLOAT, iDimensions> &)bn) = DOUBLEtoFLOAT(tmp);
 
     strm>>(INDEX&)bn.bn_bnlLocation;
 

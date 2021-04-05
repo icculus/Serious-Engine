@@ -46,7 +46,7 @@ CStaticStackArray<GFXVertex4>  _avLerpedTileLayerVertices;
 
 // Arrays for batch rendering of tiles is lowest mip
 static CStaticStackArray<GFXVertex4>  _avDelayedVertices;
-static CStaticStackArray<INDEX>       _aiDelayedIndices;
+static CStaticStackArray<INDEX_T>     _aiDelayedIndices;
 static CStaticStackArray<GFXTexCoord> _auvDelayedTexCoords;
 static CStaticStackArray<GFXTexCoord> _auvDelayedShadowMapTC;
 
@@ -770,7 +770,7 @@ static void RenderBatchedTiles(void)
   GFXVertex4  *pavVertices     = &_avDelayedVertices[0];
   GFXTexCoord *pauvTexCoords   = &_auvDelayedTexCoords[0];
   GFXTexCoord *pauvShadowMapTC = &_auvDelayedShadowMapTC[0];
-  INDEX       *paiIndices      = &_aiDelayedIndices[0];
+  INDEX_T     *paiIndices      = &_aiDelayedIndices[0];
   INDEX        ctVertices      = _avDelayedVertices.Count();
   INDEX        ctIndices       = _aiDelayedIndices.Count();
 
@@ -826,12 +826,12 @@ static void BatchTile(INDEX itt)
   GFXVertex4  *pavVertices        = &tt.GetVertices()[0];
   GFXTexCoord *pauvTexCoords      = &tt.GetTexCoords()[0];
   GFXTexCoord *pauvShadowMapTC    = &tt.GetShadowMapTC()[0];
-  INDEX       *paiIndices         = &tt.GetIndices()[0];
+  INDEX_T     *paiIndices         = &tt.GetIndices()[0];
 
   GFXVertex4  *pavDelVertices     = _avDelayedVertices.Push(9);
   GFXTexCoord *pauvDelTexCoords   = _auvDelayedTexCoords.Push(9);
   GFXTexCoord *pauvDelShadowMapTC = _auvDelayedShadowMapTC.Push(9);
-  INDEX       *paiDelIndices      = _aiDelayedIndices.Push(24);
+  INDEX_T     *paiDelIndices      = _aiDelayedIndices.Push(24);
 
   // for each vertex in tile
   for(INDEX ivx=0;ivx<9;ivx++) {
@@ -891,7 +891,7 @@ static void RenderFogLayer(INDEX itt)
   _fFogAddH = (_fog_vHDirAbs % vObjPosition) + _fog_fp.fp_fH3;
 
   GFXVertex *pvVtx;
-  INDEX     *piIndices;
+  INDEX_T   *piIndices;
   INDEX ctVertices;
   INDEX ctIndices;
   // if this is tile 
@@ -947,7 +947,7 @@ static void RenderHazeLayer(INDEX itt)
   _fHazeAdd += _vViewer(3) * (vObjPosition(3) - _aprProjection->pr_vViewerPosition(3));
 
   GFXVertex *pvVtx;
-  INDEX     *piIndices;
+  INDEX_T   *piIndices;
   INDEX ctVertices;
   INDEX ctIndices;
   // if this is tile 
@@ -1103,7 +1103,7 @@ static void RenderTile(INDEX itt)
     gfxSetTextureMatrix2(NULL);
     INDEX ctIndices = tt.GetIndices().Count();
     if(ctIndices>0) {
-      INDEX *paiIndices = &tt.GetIndices()[0];
+      INDEX_T *paiIndices = &tt.GetIndices()[0];
 
       // if detail map exists
       if(_ptrTerrain->tr_ptdDetailMap!=NULL) {
@@ -1157,7 +1157,7 @@ static void RenderTile(INDEX itt)
     if(_wrpWorldRenderPrefs.wrp_shtShadows!=CWorldRenderPrefs::SHT_NONE) {
       gfxDepthFunc(GFX_EQUAL);
       INDEX ctIndices = tt.GetIndices().Count();
-      INDEX *paiIndices = &tt.GetIndices()[0];
+      INDEX_T *paiIndices = &tt.GetIndices()[0];
 
       gfxSetTextureWrapping(GFX_CLAMP,GFX_CLAMP);
       gfxBlendFunc(GFX_DST_COLOR,GFX_SRC_COLOR);
